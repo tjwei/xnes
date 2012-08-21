@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<textarea id="output" rows="15" ></textarea>
+<script>
+output=document.getElementById("output")
+output.value+="start"
+worker= new Worker("xnes.ww.js")
+worker.onmessage = function(event){
+   output.value+=event.data
+   output.value+="\n"
+}
+
+</script>
+
+</body>
+</html>

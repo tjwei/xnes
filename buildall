@@ -1,0 +1,11 @@
+#!/bin/sh
+set -o verbose
+mkdir -p output
+cd snem
+time ./buildxnes || exit 1
+time ./buildww || exit 1
+cd ..
+cd snes9x/sdl
+time ./buildhtml || exit 1
+cd ../..
+

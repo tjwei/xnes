@@ -1,0 +1,13 @@
+#!/bin/sh
+set -o verbose
+OUT=../output
+emcc -DEMCCHACK  -O2 -o $OUT/xnes.ww.js *.c \
+-s EXPORTED_FUNCTIONS="['_main', '_reboot_emulator', '_native_set_joypad_state', '_renderscreen', '_mainloop', '_native_bitmap_pointer']"  || exit 1
+(cat $OUT/xnes.ww.js;grep -v "// WW2" testworker.js) > $OUT/ww.js || exit 1
+(cat $OUT/xnes.ww.js;grep -v "// WW1" testworker.js) > $OUT/ww2.js || exit 1
+rm $OUT/xnes.ww.js || exit 1
+cp snesWW.html $OUT || exit 1
+cp snesWW2.html $OUT || exit 1
+
+
+

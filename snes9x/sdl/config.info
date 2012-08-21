@@ -1,0 +1,16 @@
+
+build information:
+cc...............,,,. gcc
+c++.................. g++
+options.............. -O3 -fomit-frame-pointer -fno-exceptions -fno-rtti -pedantic -Wall -W -Wno-unused-parameter -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
+defines.............. -DHAVE_MKSTEMP -DHAVE_STRINGS_H -DHAVE_SYS_IOCTL_H -DHAVE_STDINT_H -DRIGHTSHIFT_IS_SAR
+libs................. -L/usr/lib/x86_64-linux-gnu -lSDL
+
+features:
+screenshot support... no
+netplay support...... no
+GZIP support......... no
+ZIP support.......... no
+JMA support.......... no
+debugger............. no
+

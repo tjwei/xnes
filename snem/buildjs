@@ -1,0 +1,5 @@
+#!/bin/sh
+# build an ascii version for benchmark, see drawansi.h for various mode of ansi art graphics
+set -o verbose
+OUT=../output
+emcc -O2  -s EXPORTED_FUNCTIONS="['_main', '_reboot']" -DASCII -DBENCHMARK  -o $OUT/xnes.js *.c  --embed-file smw.smc
