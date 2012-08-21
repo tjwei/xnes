@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+    </TITLE>
+    <META NAME="GENERATOR" CONTENT="LibreOffice 3.5  (Linux)">
+      <META NAME="AUTHOR" CONTENT="tjw ">
+	<META NAME="CREATED" CONTENT="20120818;21445000">
+	  <META NAME="CHANGEDBY" CONTENT="tjw ">
+	    <META NAME="CHANGED" CONTENT="20120818;22500500">
+	      <STYLE TYPE="text/css">
+		<!--
+
+		  -->
+		</STYLE>
+	      </HEAD>
+	      <BODY>
+	      <H1>		
+		  <SPAN >XNES:
+		  Experimental Javascript Super Nitendo Emulators</SPAN>
+		</H1>
+		Author: TJW </br>
+		<SPAN>	powered by emscripten, SNEM, Snes9x</SPAN>
+		<P STYLE="margin-bottom: 0cm">
+		  <BR>
+		  </P>
+		  <P STYLE="margin-bottom: 0cm">
+		    <SPAN >Tested
+		    on Chrome(Win32/Linux/Android), Firefox(Win32/Linux)</SPAN>
+		  </P>
+		  <P STYLE="margin-bottom: 0cm">
+		    <SPAN > Source code: <a href="https://github.com/tjwei/xnes">https://github.com/tjwei/xnes</a> </SPAN>
+		    </P>
+		    <iframe width="560" height="315" src="http://www.youtube.com/embed/PZzsPo5qs2A" frameborder="0" allowfullscreen>
+		    </iframe>
+		    <iframe width="560" height="315" src="http://www.youtube.com/embed/6DI3S0oIeno" frameborder="0" allowfullscreen>
+		    </iframe>
+		    <H2>
+		      
+			<SPAN >SNEM
+			  based ports:  </SPAN>
+			</H2>
+			<P STYLE="margin-bottom: 0cm">
+			  <SPAN >Faster
+			  but compatibiliy is very poor</SPAN>
+			</P>
+			<P STYLE="margin-bottom: 0cm">
+			  <SPAN >
+			    <A HREF="snesEmu.html">snesEmu</A>
+			    You should try this first.</SPAN>
+			  </P>
+			  <P STYLE="margin-bottom: 0cm">
+			    <SPAN >
+			      <A HREF="snesWW.html">snesWW</A>
+			      (Web workers) very fast for linux 64 firefox, very slow for chrome </SPAN>
+			    </P>
+			    <P STYLE="margin-bottom: 0cm">
+			      <SPAN >
+				<A HREF="snesWW2.html">snesWW2</A>
+				(Web workers method 2) Sometimes, this one performs better on my
+				Xoom.</SPAN>
+			      </P>
+			      <P STYLE="margin-bottom: 0cm">
+				<BR>
+				</P>
+				<P STYLE="margin-bottom: 0cm">
+				  <SPAN >Control:
+				  </SPAN>
+				</P>
+				<P STYLE="margin-bottom: 0cm">        
+				</P>
+				<TABLE WIDTH=178 CELLPADDING=4 CELLSPACING=0>
+				  <COL WIDTH=102>
+				    <COL WIDTH=58>
+				      <TR VALIGN=TOP>
+					<TD WIDTH=102 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+					<P>
+					  <SPAN >Button
+					  </SPAN>
+					</P>
+				      </TD>
+				      <TD WIDTH=58 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+				      <P>
+					<SPAN >Key
+					</SPAN>
+				      </P>
+				    </TD>
+				  </TR>
+				  <TR VALIGN=TOP>
+				    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+				    <P>
+				      <SPAN >Dpad
+				      </SPAN>
+				    </P>
+				  </TD>
+				  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+				  <P>
+				    <SPAN >arrows
+				    </SPAN>
+				  </P>
+				</TD>
+			      </TR>
+			      <TR VALIGN=TOP>
+				<TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+				<P>
+				  <SPAN >A
+				  </SPAN>
+				</P>
+			      </TD>
+			      <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			      <P>
+				<SPAN >S
+				</SPAN>
+			      </P>
+			    </TD>
+			  </TR>
+			  <TR VALIGN=TOP>
+			    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			    <P>
+			      <SPAN >B
+			      </SPAN>
+			    </P>
+			  </TD>
+			  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			  <P>
+			    <SPAN >X
+			    </SPAN>
+			  </P>
+			</TD>
+		      </TR>
+		      <TR VALIGN=TOP>
+			<TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>
+			  <SPAN >X
+			  </SPAN>
+			</P>
+		      </TD>
+		      <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+		      <P>
+			<SPAN >A
+			</SPAN>
+		      </P>
+		    </TD>
+		  </TR>
+		  <TR VALIGN=TOP>
+		    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+		    <P>
+		      <SPAN >Y
+		      </SPAN>
+		    </P>
+		  </TD>
+		  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+		  <P>
+		    <SPAN >Z
+		    </SPAN>
+		  </P>
+		</TD>
+	      </TR>
+	      <TR VALIGN=TOP>
+		<TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+		<P>
+		  <SPAN >Start
+		  </SPAN>
+		</P>
+	      </TD>
+	      <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+	      <P>
+		<SPAN >C
+		</SPAN>
+	      </P>
+	    </TD>
+	  </TR>
+	  <TR VALIGN=TOP>
+	    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+	    <P>
+	      <SPAN >Select
+	      </SPAN>
+	    </P>
+	  </TD>
+	  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+	  <P>
+	    <SPAN >D
+	    </SPAN>
+	  </P>
+	</TD>
+      </TR>
+    </TABLE>
+    <P STYLE="margin-bottom: 0cm">
+      <SPAN >Select
+      a rom file from your computer. Press start, the run the game.</SPAN>
+    </P>
+    <P STYLE="margin-bottom: 0cm">
+      <SPAN >There
+	is no way to select and play another rom, you need to refresh the
+	page.</SPAN>
+      </P>
+      <P STYLE="margin-bottom: 0cm">
+	<BR>
+	</P>
+	<P STYLE="margin-bottom: 0cm">
+	  <SPAN >Playable
+	    games: </SPAN>
+	  </P>
+	  <UL>
+	  <LI>
+	    <P STYLE="margin-bottom: 0cm">
+	      
+		<SPAN >Super
+		Mario World</SPAN>
+	      </P>
+	      <LI>
+		<P STYLE="margin-bottom: 0cm">
+		  
+		    <SPAN >Donkey
+		    Kong Country</SPAN>
+		  </P>
+		  <LI>
+		    <P STYLE="margin-bottom: 0cm">
+		      
+			<SPAN >Super
+			  Mario All Stars </SPAN>
+			</P>
+			<LI>
+			  <P STYLE="margin-bottom: 0cm">
+			    
+			      <SPAN >Prince
+			      of Persia</SPAN>
+			    </P>
+			    <LI>
+			      <P STYLE="margin-bottom: 0cm">
+				
+				  <SPAN >Street
+				  Fighter 2 Turbo</SPAN>
+				</P>
+			      </UL>
+			      <P STYLE="margin-bottom: 0cm">
+				<SPAN >
+				  The number that looks framerate is in fact (frames+skipped
+				  frames)/sec.</SPAN>
+				</P>
+				<P STYLE="margin-bottom: 0cm">
+				  <SPAN >So
+				    60 (for NTSC games) or 50 (for PAL games) means the game runs in
+				    normal speed.</SPAN>
+				  </P>
+				  <P STYLE="margin-bottom: 0cm">
+				    <SPAN >If
+				      the number is too low, try to increase the value of frameskip. If the
+					number is too high, then, try Snes9x based emulator. </SPAN>
+				      </P>
+				      <P STYLE="margin-bottom: 0cm">
+					<BR>
+					</P>
+					<H2>
+					  
+					    <SPAN >Snes9x
+					    based ports:</SPAN>
+					  </H2>
+					  <P STYLE="margin-bottom: 0cm">
+					    <SPAN >Good
+					    compatibility, but slower</SPAN>
+					  </P>
+					  <P STYLE="margin-bottom: 0cm">
+					    <SPAN >
+					      <A HREF="snes9x.html">snes9x</A>
+					      (no sound)</SPAN>
+					    </P>
+					      <P STYLE="margin-bottom: 0cm">
+						<SPAN >
+						  <A HREF="sound4/snes9x.html">snes9x</A>
+						  (with better sound) </SPAN>
+						</P>
+						<P STYLE="margin-bottom: 0cm">
+						  <BR>
+						  </P>
+						  <P STYLE="margin-bottom: 0cm">
+						    <SPAN >Control</SPAN>
+						  </P>
+						  <P STYLE="margin-bottom: 0cm">        
+						  </P>
+						  <TABLE WIDTH=208 CELLPADDING=4 CELLSPACING=0>
+						    <COL WIDTH=87>
+						      <COL WIDTH=103>
+							<TR VALIGN=TOP>
+							  <TD WIDTH=87 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+							  <P>
+							    <SPAN >Button
+							    </SPAN>
+							  </P>
+							</TD>
+							<TD WIDTH=103 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+							<P>
+							  <SPAN >Key
+							  </SPAN>
+							</P>
+						      </TD>
+						    </TR>
+						    <TR VALIGN=TOP>
+						      <TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+						      <P>
+                                                          <SPAN >Dpad
+			   </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P><SPAN >arrows
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >A
+			      </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >D
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >B
+			      </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >C</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >X
+			       </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P><SPAN >S
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >Y
+			      </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >X
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>        <SPAN >Start
+			    </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >Enter
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>        <SPAN >Select
+			    </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >Space</SPAN></P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN >Older
+version:</SPAN></P>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/cLiF-NiHdP0" frameborder="0" allowfullscreen></iframe>
+<P STYLE="margin-bottom: 0cm"><SPAN >If
+your browser does not support HTML5 file api or file reader, try an
+older snem based port</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.b81.org/~tjw/xnes">old
+xnes</A> with public domain roms</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.b81.org/~tjw/smw">old
+xnes</A> with Super Mario World</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN >Links:</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="https://github.com/kripken/emscripten/wiki/">Emscripten</A></SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.tommowalker.co.uk/snem.html">SNEM</A></SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.snes9x.com/">Snes9x</A></SPAN></P>
+</BODY>
+</HTML>
