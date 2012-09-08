@@ -10,7 +10,7 @@ Note:
 4 Sounds and many other features of snes9x version are disabled for speed. You can enable them if you want. To enable the sound, simply add -DSOUND option to emcc (see snes9x/sdl/buildhtml).
 
 More information:
-http://weijr.b81.org/xnes  #Demo and information
+http://tjwei.github.com/xnes  # Demo and information (brought your own roms)
 
 Blog posts (Tradition Chinese)
 http://weijr-note.blogspot.tw/2012/06/javascript-snes-emulator-wip.html # Orginal version (6/22/2012)

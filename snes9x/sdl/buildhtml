@@ -5,7 +5,9 @@ OBJECTS="../apu/apu.cpp ../apu/SNES_SPC.cpp ../apu/SNES_SPC_misc.cpp ../apu/SNES
 INCLUDES="-I. -I.. -I../apu/"
 CCFLAGS="-U__linux -O2 -DLSB_FIRST  -fomit-frame-pointer -fno-exceptions -fno-rtti -pedantic -Wall -W -Wno-unused-parameter -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -DHAVE_MKSTEMP -DHAVE_STRINGS_H -DHAVE_SYS_IOCTL_H -DHAVE_STDINT_H -DRIGHTSHIFT_IS_SAR" 
 
-emcc -O2 -s EXPORTED_FUNCTIONS="['_main', '_reboot_emulator', '_set_transparency', '_renderscreen', '_mainloop' ]"  -o $OUT/xnes9x.html -DUSE_SDL -DHTML $INCLUDES $CCFLAGS $OBJECTS -lm -lSDL #-DSOUND 
+emcc -O2 -s EXPORTED_FUNCTIONS="['_main', '_reboot_emulator', '_set_transparency', '_renderscreen', '_mainloop' ]" \
+ -s USE_DATAVIEW=1 --closure 1 \
+ -o $OUT/xnes9x.html -DUSE_SDL -DHTML $INCLUDES $CCFLAGS $OBJECTS -lm -lSDL #-DSOUND 
 python extract_script.py $OUT/xnes9x.html > $OUT/xnes9x.html.js || exit 1
 
 rm $OUT/xnes9x.html || exit 1
