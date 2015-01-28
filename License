@@ -1,0 +1,8 @@
+The license of this project depends on the license of snes9x, snem, and emscript
+snes9x is a freeware for PERSONAL USE only. see https://github.com/snes9xgit/snes9x/blob/master/docs/snes9x-license.txt
+snem claimed to be open source but not sure wich license it is. I sent an email to the author asking for the license(2 years ago), 
+but have not get response yet.
+mscripten is available under 2 licenses, the MIT license and the University of Illinois/NCSA Open Source License.
+https://github.com/kripken/emscripten/blob/master/LICENSE
+
+All my modifications, if applicatable, are under public domain. 
