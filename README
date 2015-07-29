@@ -4,7 +4,7 @@ Install emscripten and make sure emcc is in your $PATH.
 see output for compiled results.
 
 Note:
-1 For snem port, I use a wrong and very unstable way to access Heap32. I simply assume Module.Heap32 is compiles to global variable i by closure. There are much better ways to do this, but variable i works for me so far, so I am too lazy to fix it.
+1 For snem port, I use a wrong and very unstable way to access Heap32. I simply assume Module.Heap32 is compiled to global variable i by closure. There are much better ways to do this, but variable i works for me so far, so I am too lazy to fix it.
 2 There is a bug in library_sdl.js of current emscripten. library_sdl.js does not handle a-z keys correctly. Use snes9x/sdl/library_sdl.js to overwrite emcscripten/src/library_sdl.js to fix the bug.
 3 It tooks about 1 min to compile snesEmu and another 1 min for snesWW* on my core i7-2600 machine. Compling snes9x requires about 7 min. 
 4 Sounds and many other features of snes9x version are disabled for speed. You can enable them if you want. To enable the sound, simply add -DSOUND option to emcc (see snes9x/sdl/buildhtml).
