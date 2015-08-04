@@ -2,6 +2,8 @@ Build:
 Install emscripten and make sure emcc is in your $PATH.
 ./buildall
 see output for compiled results.
+snem port is outdated, can only be compiled by a very old version of emscripten.
+snes9x port is updated for emscripten 1.34.3
 
 Note:
 1 For snem port, I use a wrong and very unstable way to access Heap32. I simply assume Module.Heap32 is compiled to global variable i by closure. There are much better ways to do this, but variable i works for me so far, so I am too lazy to fix it.
