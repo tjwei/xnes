@@ -3,25 +3,61 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>XNes: javascript SNES emulator</title>
+    <title>Emscripten-Generated Code</title>
     <style>
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
-      canvas.emscripten { border: 1px solid black; image-rendering: optimizeSpeed}
-      textarea.emscripten { font-family: monospace; width: 80%; background-color: black;color: #99aa99}
+      textarea.emscripten { font-family: monospace; width: 80%; }
       div.emscripten { text-align: center; }
-      select.romlist {width: 20em; display: block;}
-      :-webkit-full-screen  {
-      width: 100%;
-      height: 100%;
-      image-rendering: optimizeSpeed;
+      div.emscripten_border { border: 1px solid black; }
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten { border: 0px none; }
+
+      .spinner {
+        height: 50px;
+        width: 50px;
+        margin: 0px auto;
+        -webkit-animation: rotation .8s linear infinite;
+        -moz-animation: rotation .8s linear infinite;
+        -o-animation: rotation .8s linear infinite;
+        animation: rotation 0.8s linear infinite;
+        border-left: 10px solid rgb(0,150,240);
+        border-right: 10px solid rgb(0,150,240);
+        border-bottom: 10px solid rgb(0,150,240);
+        border-top: 10px solid rgb(100,0,200);
+        border-radius: 100%;
+        background-color: rgb(200,100,250);
       }
+      @-webkit-keyframes rotation {
+        from {-webkit-transform: rotate(0deg);}
+        to {-webkit-transform: rotate(360deg);}
+      }
+      @-moz-keyframes rotation {
+        from {-moz-transform: rotate(0deg);}
+        to {-moz-transform: rotate(360deg);}
+      }
+      @-o-keyframes rotation {
+        from {-o-transform: rotate(0deg);}
+        to {-o-transform: rotate(360deg);}
+      }
+      @keyframes rotation {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+      }
+
     </style>
   </head>
   <body>
     <hr/>
-    <div class="emscripten" id="status"></div>
-    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>    
+    <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
+    <div class="emscripten" id="status">Downloading...</div>
+    <div class="emscripten">
+      <progress value="0" max="100" id="progress" hidden=1></progress>  
+    </div>
+    <div class="emscripten_border">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
     <hr/>
+    <div>
     <input type="text" id="fps" size="5"/>
     <input type="file" onchange="snes_readfile(this)" />
     <input type="button" id="start" value="start" onclick="snes_main()" />
@@ -29,42 +65,106 @@
     <input type="text" id="frameskip" size="5" value="0" />
     <input type="button" value="+" onclick="frameskip_adjust(1)" />
     <input type="button" value="-" onclick="frameskip_adjust(-1)" />
-    <hr/>
-    <input type="button" id="test" value="test" onclick="snes_test(1)" style="display: none;"< />
-    <input type="button" id="test2" value="test2" onclick="snes_test(0)" style="display: none;"< /> 
-    <input type="button" value="fullscreen" onclick="RequestFullScreen()" />
-    <input type="button" value="quality" onclick="ToggleQuality()" />    
     <input type="button" value="transparency" onclick="ToggleTransparency()" />
-    <textarea class="emscripten" id="output" rows="8"></textarea>       
-    <script type="text/javascript" src="xnes9x.html.js" > </script>
-    <script type="text/javascript">    
+        <input type="button" value="display framerate" onclick="ToggleDisplayFramerate()" />
+    </div>
+    <div class="emscripten">
+      <input type="checkbox" id="resize">Resize canvas
+      <input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer
+      &nbsp;&nbsp;&nbsp;
+      <input type="button" value="Fullscreen" onclick="Module.requestFullScreen(document.getElementById('pointerLock').checked, 
+                                                                                document.getElementById('resize').checked)">
+    </div>
+    
+    <hr/>
+    <textarea class="emscripten" id="output" rows="8"></textarea>
+    <hr>
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+      var spinnerElement = document.getElementById('spinner');
+
+      var Module = {
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            // These replacements are necessary if you render to raw HTML
+            //text = text.replace(/&/g, "&amp;");
+            //text = text.replace(/</g, "&lt;");
+            //text = text.replace(/>/g, "&gt;");
+            //text = text.replace('\n', '<br>', 'g');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.value = parseInt(m[2])*100;
+            progressElement.max = parseInt(m[4])*100;
+            progressElement.hidden = false;
+            spinnerElement.hidden = false;
+          } else {
+            progressElement.value = null;
+            progressElement.max = null;
+            progressElement.hidden = true;
+            if (!text) spinnerElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        }
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function() {
+        Module.setStatus('Exception thrown, see JavaScript console');
+        spinnerElement.style.display = 'none';
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+    </script>
+    <script async type="text/javascript" src="snes9x.js"></script>
+    
+    
+       <script type="text/javascript">
+           cout_print = Module.print
 	   frameskip=0	   
 	   frameskip_text=document.getElementById("frameskip")	   
 	   frameskip_text.value=frameskip
-	   maincanvas=document.getElementById("canvas")
-	   if(maincanvas.webkitRequestFullScreen){
-	    RequestFullScreen=function(){maincanvas.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)}
-	   }
-	   else{
-	   RequestFullScreen=function(){maincanvas.mozRequestFullScreen()}
-	   }	   	   
-	   mainctx = maincanvas.getContext("2d");
-	   maincanvas.width=256
-	   maincanvas.height=224
-	   imgData=mainctx.createImageData(288,224)
-	   cout=document.getElementById("output")
-	   function cout_print(txt){
-	      cout.value+=txt+"\n"
-	      cout.scrollTop = 999999
-	   }
-	   function ToggleQuality(){	  	      
-	      if(maincanvas.style.imageRendering.toLowerCase()=="optimizespeed")
-		  maincanvas.style.imageRendering="optimizeQuality"
-	      else
-	         maincanvas.style.imageRendering="optimizeSpeed"
-	      
-	      cout_print(maincanvas.style.imageRendering)
-	   }
 	   snes_transparency=1
 	   function ToggleTransparency(){
 		snes_transparency=!snes_transparency
@@ -72,74 +172,19 @@
 	      cout_print("Transparency is now "+(snes_transparency ? "on" : "off"))
 	   }	   
     </script>
-    <script>
-	   
-           function snes_mainloop(){		
-            mainloop(frameskip)        
-            frameskipped+=frameskip
-            frames++
-            if (frames+frameskipped>=60){
-                this_time=new Date().getTime()
-                fps_text.value=((frames+frameskipped)*1000/(this_time-last_time)).toFixed(3)
-                last_time=this_time
-                frameskipped=frames=0
-                }
-                setTimeout("snes_mainloop()", 0);
-	      
-           }           
-           function snes_onkeyevent(e){
-	      var joy1=0
-	      globale=e
-	      var key=e.key || e.keyCode	      	 
-	      switch(key){
-	      case 87:  joy1=0x0010;break;
-	      case 81:  joy1=0x0020;break;
-	      case 65:  joy1=0x0040;break;
-	      case 83:  joy1=0x0080;break;
-	      case 39: joy1=0x0100;break;
-	      case 37:  joy1=0x0200;break;
-	      case 40:  joy1=0x0400;break;
-	      case 38:   joy1=0x0800;break;
-	      case 67:     joy1=0x1000;break;
-	      case 68:     joy1=0x2000;break;
-	      case 90:     joy1=0x4000;break;
-	      case 89:     joy1=0x4000;break;
-	      case 88:     joy1=0x8000;break;
-	      }
-	      if(e.type=="keyup"){
-		  joy1state&=~joy1;
-		  native_set_joypad_state(joy1state);
-	      }
-	      else if (e.type=="keydown"){
-		joy1state|=joy1;
-		native_set_joypad_state(joy1state);
-	      }
-	      if(joy1) e.preventDefault()
-           }
-           function snes_init(){
-           reboot_emulator=Module.cwrap('reboot_emulator', 'number', ['string'])
-           native_set_joypad_state=Module._native_set_joypad_state
-            native_bitmap_pointer=Module._native_bitmap_pointer
-            mainloop=Module._mainloop
-            renderscreen=Module._renderscreen
-            fps_text=document.getElementById("fps")
-            reboot_emulator("/_.smc")
-            frameskipped=0
-		for(var i=0;i<288*224*4;i+=4){		 
-		  imgData.data[i+3]=0xff
-		  }
-
-           }
+    <script>           
+            if (window.File && window.FileReader && window.FileList && window.Blob) {
+	    } else {
+	        alert('The File APIs are not fully supported in this browser.')
+                cout_print('The File APIs are not fully supported in this browser.');
+	    }
            function frameskip_adjust(n){
 	      frameskip+=n
 	      if(frameskip<0) frameskip=0
-	      frameskip_text.value=frameskip	      
+	      frameskip_text.value=frameskip
+	      set_frameskip(frameskip);
            }
-           function snes_readfile(controller){	      
-              if (window.File && window.FileReader && window.FileList && window.Blob) {
-	    } else {
-	    alert('The File APIs are not fully supported in this browser.');
-	    }
+           function snes_readfile(controller){
 	      var f=controller.files[0]
 	      cout_print(f.name)
 	      var reader= new FileReader()
@@ -154,30 +199,41 @@
 	      }
 	      reader.onload = function(e) {		 
 		  cout_print("_.smc loaded")		  
-		  Module.FS_createDataFile("/", "_.smc", new Uint8Array(this.result) , true, true)		  
+		  Module.FS_createDataFile("/", "_.smc", new Uint8Array(this.result) , true, true);
 		}	      
               reader.readAsArrayBuffer(f)
            }           
            function snes_main(){            
+            set_frameskip=Module.cwrap('set_frameskip', 'number', ['number'])
+	    ToggleDisplayFramerate = Module._toggle_display_framerate
            document.getElementById("start").disabled=true                  
-           snes_init()	            
 	   reboot_romnum=-1	  	   
-	   frames=0	   
-	   last_time=new Date().getTime()
-	   snes_mainloop();
-           }
-           function snes_test(render){
-              snes_init()              
-	      start_time=new Date().getTime()
-	      for(var i=0;i<5000;i++){
-		mainloop(palf ? 312 : 262)
-		if(render)
-		renderscreen()	
-	      }
-	      end_time=new Date().getTime()
-	      fps_text.value=((end_time-start_time)/1000).toFixed(3)
-           
+	   frames=0
+	   fps_text=document.getElementById("fps")
+           frameskipped=0
+	   Module._run();
            }
            
     </script>
-</body>
+    <div>
+    <p> .smc rom are needed in order to play.  </p>
+    Keys are mapped as followings, you may need to click on the canvas or click the full screen button to let the canvas get the focus.
+<code>
+<pre>
+    S9xMapButton(SDLK_RIGHT, S9xGetCommandT("Joypad1 Right"), false);
+    S9xMapButton(SDLK_LEFT, S9xGetCommandT("Joypad1 Left"), false);
+    S9xMapButton(SDLK_DOWN, S9xGetCommandT("Joypad1 Down"), false);
+    S9xMapButton(SDLK_UP, S9xGetCommandT("Joypad1 Up"), false);
+    S9xMapButton(SDLK_RETURN, S9xGetCommandT("Joypad1 Start"), false);
+    S9xMapButton(SDLK_SPACE,  S9xGetCommandT("Joypad1 Select"), false);
+    S9xMapButton(SDLK_d, S9xGetCommandT("Joypad1 A"), false);
+    S9xMapButton(SDLK_c, S9xGetCommandT("Joypad1 B"), false);
+    S9xMapButton(SDLK_s, S9xGetCommandT("Joypad1 X"), false);
+    S9xMapButton(SDLK_x, S9xGetCommandT("Joypad1 Y"), false);
+    S9xMapButton(SDLK_a, S9xGetCommandT("Joypad1 L"), false);
+    S9xMapButton(SDLK_z, S9xGetCommandT("Joypad1 R"), false);
+</pre>
+</code>
+    <div>
+  </body>
+</html>
