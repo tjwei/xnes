@@ -67,7 +67,7 @@
 
 
 static const char	*s9x_base_dir        = NULL,
-					*rom_filename        = "smw.smc";
+					*rom_filename        = "_.smc";
 
 extern uint32           sound_buffer_size; // used in sdlaudio
 
@@ -458,11 +458,13 @@ void S9xAutoSaveSRAM (void)
 {
     printf("auto save sram\n");
 }
-static int update_screen=0;
 void S9xSyncSpeed (void)
 {
 #ifdef HTML
-    IPPU.RenderThisFrame=update_screen;
+	IPPU.RenderThisFrame = (++IPPU.SkippedFrames >= Settings.SkipFrames) ? TRUE : FALSE;
+        if (IPPU.RenderThisFrame)
+		IPPU.SkippedFrames = 0;
+     
 #else
 	static struct timeval	next1 = { 0, 0 };
 	struct timeval			now;
@@ -504,6 +506,7 @@ void S9xSyncSpeed (void)
 
 	while (timercmp(&next1, &now, >))
 	{
+            
 		// If we're ahead of time, sleep a while.
 		unsigned	timeleft = (next1.tv_sec - now.tv_sec) * 1000000 + next1.tv_usec - now.tv_usec;
 		usleep(timeleft);
@@ -520,6 +523,7 @@ void S9xSyncSpeed (void)
 		next1.tv_usec %= 1000000;
 	}
 #endif
+
 }
 
 void S9xExit (void)
@@ -558,14 +562,20 @@ void S9xParseArg (char **argv, int &i, int argc){
 
 
 #ifdef HTML
-extern "C" void mainloop(int) __attribute__((used));
-extern "C" void reboot_emulator(char *) __attribute__((used));
-void mainloop(int i){
+extern "C" void toggle_display_framerate() __attribute__((used));
+extern "C" void run() __attribute__((used));
+extern "C" int set_frameskip(int) __attribute__((used));
+int set_frameskip(int n){
+Settings.SkipFrames = n;
+return n;    
+}
+void toggle_display_framerate(){
+
+    Settings.DisplayFrameRate = !Settings.DisplayFrameRate;
+}
+void mainloop(){
     S9xProcessEvents(FALSE);
-    for(;i>=0;i--){
-        update_screen=i==0;
-        S9xMainLoop();    
-    }
+    S9xMainLoop();    
 }
 void reboot_emulator(char *filename){
     	uint32	saved_flags = CPU.Flags;
@@ -600,6 +610,20 @@ void* set_transparency(int i){
     Settings.Transparency=i;
     return (void *)&Settings;
 }
+void run(){
+    reboot_emulator("_.smc");
+    #ifdef SOUND
+    printf("S9xSetSoundMute(FALSE)\n");
+    S9xSetSoundMute(FALSE);
+    #else
+    printf("S9xSetSoundMute(TRUE)\n");
+    S9xSetSoundMute(TRUE);
+    #endif
+    printf("start main loop");
+    emscripten_set_main_loop(mainloop, 0, 0);
+}
+
+
 #endif
 
 
@@ -629,9 +653,11 @@ int main (int argc, char **argv)
 	Settings.StopEmulation = TRUE;
 	Settings.WrongMovieStateProtection = TRUE;
 	Settings.DumpStreamsMaxFrames = -1;
+        Settings.DisplayFrameRate = TRUE;
+        Settings.AutoDisplayMessages = TRUE;
 	Settings.StretchScreenshots = 1;
 	Settings.SnapshotScreenshots = TRUE;
-	Settings.SkipFrames = AUTO_FRAMERATE;
+	Settings.SkipFrames = 0;
 	Settings.TurboSkipFrames = 15;
 	Settings.CartAName[0] = 0;
 	Settings.CartBName[0] = 0;
@@ -668,7 +694,7 @@ int main (int argc, char **argv)
 	// domaemon: setting the title on the window bar
 	
 #ifdef HTML
-    //emscripten_set_main_loop(mainloop, 15);
+       emscripten_exit_with_live_runtime();
 #else
     	uint32	saved_flags = CPU.Flags;
 	bool8	loaded = FALSE;
@@ -704,9 +730,8 @@ int main (int argc, char **argv)
 	for(iters=0;iters<5000;iters++)
 	{
 
-        update_screen=iters%3==0;
         S9xMainLoop();
-		S9xProcessEvents(FALSE);        
+        S9xProcessEvents(FALSE);        
 	}
 #endif
 	return (0);
