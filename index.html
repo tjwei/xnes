@@ -1,328 +1,399 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<title> </title>
-	<meta name="generator" content="LibreOffice 4.4.2.2 (Linux)"/>
-	<meta name="author" content="tjw "/>
-	<meta name="created" content="2012-08-18T00:00:00.021445000"/>
-	<meta name="changed" content="2015-08-04T21:50:30.216978482"/>
-	<meta name="CHANGEDBY" content="tjw ">
-</head>
-<body lang="zh-TW" dir="ltr">
-<h1><font face="Thorndale, serif"><font size="6" style="font-size: 24pt"><span lang="en-US">XNES:
-Experimental Javascript Super Nitendo Emulators </span></font></font>
-</h1>
-<p><font face="Liberation Serif, serif"><span lang="en-US">Author:
-TJW <br/>
-powered by emscripten, SNEM, Snes9x </span></font>
-</p>
-<p style="margin-bottom: 0cm"><br/>
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+    </TITLE>
+    <META NAME="GENERATOR" CONTENT="LibreOffice 3.5  (Linux)">
+      <META NAME="AUTHOR" CONTENT="tjw ">
+	<META NAME="CREATED" CONTENT="20120818;21445000">
+	  <META NAME="CHANGEDBY" CONTENT="tjw ">
+	    <META NAME="CHANGED" CONTENT="20120818;22500500">
+	      <STYLE TYPE="text/css">
+		<!--
 
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Tested
-on Chrome(Win32/Linux/Android), Firefox(Win32/Linux) </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Source
-code: <a href="https://github.com/tjwei/xnes">https://github.com/tjwei/xnes</a>
-</span></font>
-</p>
-<p><img src="data:" name="物件1" align="bottom" width="560" height="315"/>
-
-<img src="data:" name="物件2" align="bottom" width="560" height="315"/>
-
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<h2><font face="Liberation Serif, serif"><span lang="en-US">Snes9x
-based ports: </span></font>
-</h2>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Good
-compatibility, but slower </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="snes9x.html">snes9x</a>
-(no sound) </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="sound4/snes9x.html">snes9x</a>
-(with sound) </span></font>
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Control
-</span></font>
-</p>
-<table width="208" cellpadding="4" cellspacing="0">
-	<col width="87">
-	<col width="103">
-	<tr valign="top">
-		<td width="87" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Button </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Key </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="87" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Dpad </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">arrows </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="87" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">A </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">D </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="87" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">B </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">C</span></font></p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="87" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">X </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">S </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="87" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Y </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">X </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="87" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Start </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Enter </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="87" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Select </span></font>
-			</p>
-		</td>
-		<td width="103" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Space</span></font></p>
-		</td>
-	</tr>
-</table>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<h2><font face="Liberation Serif, serif"><span lang="en-US">SNEM
-based ports: </span></font>
-</h2>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Faster
-but compatibiliy is very poor </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="snesEmu.html">snesEmu</a>
-You should try this first. </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="snesWW.html">snesWW</a>
-(Web workers) very fast for linux 64 firefox, very slow for chrome </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="snesWW2.html">snesWW2</a>
-(Web workers method 2) Sometimes, this one performs better on my
-Xoom. </span></font>
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Control:
-</span></font>
-</p>
-<table width="1138" cellpadding="4" cellspacing="0">
-	<col width="560">
-	<col width="560">
-	<tr valign="top">
-		<td width="560" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Button </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Key </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Dpad </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">arrows </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">A </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">S </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">B </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">X </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">X </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">A </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Y </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Z/Y </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Start </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">C </span></font>
-			</p>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">Select </span></font>
-			</p>
-		</td>
-		<td width="560" style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
-			<p><font face="Liberation Serif, serif"><span lang="en-US">D </span></font>
-			</p>
-		</td>
-	</tr>
-</table>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Select
-a rom file from your computer. Press start, the run the game. </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">There
-is no way to select and play another rom, you need to refresh the
-page. </span></font>
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Playable
-games: </span></font>
-</p>
-<ul>
-	<li/>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Super
-	Mario World </span></font>
-	</p>
-	<li/>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Donkey
-	Kong Country </span></font>
-	</p>
-	<li/>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Super
-	Mario All Stars </span></font>
-	</p>
-	<li/>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Prince
-	of Persia </span></font>
-	</p>
-	<li/>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Street
-	Fighter 2 Turbo </span></font>
-	</p>
-</ul>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">The
-number that looks framerate is in fact (frames+skipped frames)/sec. </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">So
-60 (for NTSC games) or 50 (for PAL games) means the game runs in
-normal speed. </span></font>
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">If
-the number is too low, try to increase the value of frameskip. If the
-number is too high, then, try Snes9x based emulator. </span></font>
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Older
-version:</span></font></p>
-<p><img src="data:" name="物件3" align="bottom" width="420" height="315"/>
-
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">If
+		  -->
+		</STYLE>
+	      </HEAD>
+	      <BODY>
+	      <H1>		
+		  <SPAN >XNES:
+		  Experimental Javascript Super Nitendo Emulators</SPAN>
+		</H1>
+		Author: TJW </br>
+		<SPAN>	powered by emscripten, SNEM, Snes9x</SPAN>
+		<P STYLE="margin-bottom: 0cm">
+		  <BR>
+		  </P>
+		  <P STYLE="margin-bottom: 0cm">
+		    <SPAN >Tested
+		    on Chrome(Win32/Linux/Android), Firefox(Win32/Linux)</SPAN>
+		  </P>
+		  <P STYLE="margin-bottom: 0cm">
+		    <SPAN > Source code: <a href="https://github.com/tjwei/xnes">https://github.com/tjwei/xnes</a> </SPAN>
+		    </P>
+		    <iframe width="560" height="315" src="http://www.youtube.com/embed/PZzsPo5qs2A" frameborder="0" allowfullscreen>
+		    </iframe>
+		    <iframe width="560" height="315" src="http://www.youtube.com/embed/6DI3S0oIeno" frameborder="0" allowfullscreen>
+		    </iframe>
+		    <H2>
+		      
+			<SPAN >SNEM
+			  based ports:  </SPAN>
+			</H2>
+			<P STYLE="margin-bottom: 0cm">
+			  <SPAN >Faster
+			  but compatibiliy is very poor</SPAN>
+			</P>
+			<P STYLE="margin-bottom: 0cm">
+			  <SPAN >
+			    <A HREF="snesEmu.html">snesEmu</A>
+			    You should try this first.</SPAN>
+			  </P>
+			  <P STYLE="margin-bottom: 0cm">
+			    <SPAN >
+			      <A HREF="snesWW.html">snesWW</A>
+			      (Web workers) very fast for linux 64 firefox, very slow for chrome </SPAN>
+			    </P>
+			    <P STYLE="margin-bottom: 0cm">
+			      <SPAN >
+				<A HREF="snesWW2.html">snesWW2</A>
+				(Web workers method 2) Sometimes, this one performs better on my
+				Xoom.</SPAN>
+			      </P>
+			      <P STYLE="margin-bottom: 0cm">
+				<BR>
+				</P>
+				<P STYLE="margin-bottom: 0cm">
+				  <SPAN >Control:
+				  </SPAN>
+				</P>
+				<P STYLE="margin-bottom: 0cm">        
+				</P>
+				<TABLE WIDTH=178 CELLPADDING=4 CELLSPACING=0>
+				  <COL WIDTH=102>
+				    <COL WIDTH=58>
+				      <TR VALIGN=TOP>
+					<TD WIDTH=102 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+					<P>
+					  <SPAN >Button
+					  </SPAN>
+					</P>
+				      </TD>
+				      <TD WIDTH=58 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+				      <P>
+					<SPAN >Key
+					</SPAN>
+				      </P>
+				    </TD>
+				  </TR>
+				  <TR VALIGN=TOP>
+				    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+				    <P>
+				      <SPAN >Dpad
+				      </SPAN>
+				    </P>
+				  </TD>
+				  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+				  <P>
+				    <SPAN >arrows
+				    </SPAN>
+				  </P>
+				</TD>
+			      </TR>
+			      <TR VALIGN=TOP>
+				<TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+				<P>
+				  <SPAN >A
+				  </SPAN>
+				</P>
+			      </TD>
+			      <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			      <P>
+				<SPAN >S
+				</SPAN>
+			      </P>
+			    </TD>
+			  </TR>
+			  <TR VALIGN=TOP>
+			    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			    <P>
+			      <SPAN >B
+			      </SPAN>
+			    </P>
+			  </TD>
+			  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			  <P>
+			    <SPAN >X
+			    </SPAN>
+			  </P>
+			</TD>
+		      </TR>
+		      <TR VALIGN=TOP>
+			<TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>
+			  <SPAN >X
+			  </SPAN>
+			</P>
+		      </TD>
+		      <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+		      <P>
+			<SPAN >A
+			</SPAN>
+		      </P>
+		    </TD>
+		  </TR>
+		  <TR VALIGN=TOP>
+		    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+		    <P>
+		      <SPAN >Y
+		      </SPAN>
+		    </P>
+		  </TD>
+		  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+		  <P>
+		    <SPAN >Z/Y
+		    </SPAN>
+		  </P>
+		</TD>
+	      </TR>
+	      <TR VALIGN=TOP>
+		<TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+		<P>
+		  <SPAN >Start
+		  </SPAN>
+		</P>
+	      </TD>
+	      <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+	      <P>
+		<SPAN >C
+		</SPAN>
+	      </P>
+	    </TD>
+	  </TR>
+	  <TR VALIGN=TOP>
+	    <TD WIDTH=102 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+	    <P>
+	      <SPAN >Select
+	      </SPAN>
+	    </P>
+	  </TD>
+	  <TD WIDTH=58 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+	  <P>
+	    <SPAN >D
+	    </SPAN>
+	  </P>
+	</TD>
+      </TR>
+    </TABLE>
+    <P STYLE="margin-bottom: 0cm">
+      <SPAN >Select
+      a rom file from your computer. Press start, the run the game.</SPAN>
+    </P>
+    <P STYLE="margin-bottom: 0cm">
+      <SPAN >There
+	is no way to select and play another rom, you need to refresh the
+	page.</SPAN>
+      </P>
+      <P STYLE="margin-bottom: 0cm">
+	<BR>
+	</P>
+	<P STYLE="margin-bottom: 0cm">
+	  <SPAN >Playable
+	    games: </SPAN>
+	  </P>
+	  <UL>
+	  <LI>
+	    <P STYLE="margin-bottom: 0cm">
+	      
+		<SPAN >Super
+		Mario World</SPAN>
+	      </P>
+	      <LI>
+		<P STYLE="margin-bottom: 0cm">
+		  
+		    <SPAN >Donkey
+		    Kong Country</SPAN>
+		  </P>
+		  <LI>
+		    <P STYLE="margin-bottom: 0cm">
+		      
+			<SPAN >Super
+			  Mario All Stars </SPAN>
+			</P>
+			<LI>
+			  <P STYLE="margin-bottom: 0cm">
+			    
+			      <SPAN >Prince
+			      of Persia</SPAN>
+			    </P>
+			    <LI>
+			      <P STYLE="margin-bottom: 0cm">
+				
+				  <SPAN >Street
+				  Fighter 2 Turbo</SPAN>
+				</P>
+			      </UL>
+			      <P STYLE="margin-bottom: 0cm">
+				<SPAN >
+				  The number that looks framerate is in fact (frames+skipped
+				  frames)/sec.</SPAN>
+				</P>
+				<P STYLE="margin-bottom: 0cm">
+				  <SPAN >So
+				    60 (for NTSC games) or 50 (for PAL games) means the game runs in
+				    normal speed.</SPAN>
+				  </P>
+				  <P STYLE="margin-bottom: 0cm">
+				    <SPAN >If
+				      the number is too low, try to increase the value of frameskip. If the
+					number is too high, then, try Snes9x based emulator. </SPAN>
+				      </P>
+				      <P STYLE="margin-bottom: 0cm">
+					<BR>
+					</P>
+					<H2>
+					  
+					    <SPAN >Snes9x
+					    based ports:</SPAN>
+					  </H2>
+					  <P STYLE="margin-bottom: 0cm">
+					    <SPAN >Good
+					    compatibility, but slower</SPAN>
+					  </P>
+					  <P STYLE="margin-bottom: 0cm">
+					    <SPAN >
+					      <A HREF="snes9x.html">snes9x</A>
+					      (no sound)</SPAN>
+					    </P>
+					    <P STYLE="margin-bottom: 0cm">
+					      <SPAN >
+						<A HREF="sound4/snes9x.html">snes9x</A>
+						(with sound) </SPAN>
+					      </P>
+						<P STYLE="margin-bottom: 0cm">
+						  <BR>
+						  </P>
+						  <P STYLE="margin-bottom: 0cm">
+						    <SPAN >Control</SPAN>
+						  </P>
+						  <P STYLE="margin-bottom: 0cm">        
+						  </P>
+						  <TABLE WIDTH=208 CELLPADDING=4 CELLSPACING=0>
+						    <COL WIDTH=87>
+						      <COL WIDTH=103>
+							<TR VALIGN=TOP>
+							  <TD WIDTH=87 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+							  <P>
+							    <SPAN >Button
+							    </SPAN>
+							  </P>
+							</TD>
+							<TD WIDTH=103 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.1cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+							<P>
+							  <SPAN >Key
+							  </SPAN>
+							</P>
+						      </TD>
+						    </TR>
+						    <TR VALIGN=TOP>
+						      <TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+						      <P>
+                                                          <SPAN >Dpad
+			   </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P><SPAN >arrows
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >A
+			      </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >D
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >B
+			      </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >C</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >X
+			       </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P><SPAN >S
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>          <SPAN >Y
+			      </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >X
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>        <SPAN >Start
+			    </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >Enter
+</SPAN></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=87 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0.1cm; padding-right: 0cm">
+			<P>        <SPAN >Select
+			    </SPAN>
+			</P>
+		</TD>
+		<TD WIDTH=103 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0cm; padding-bottom: 0.1cm; padding-left: 0cm; padding-right: 0.1cm">
+			<P> <SPAN >Space</SPAN></P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN >Older
+version:</SPAN></P>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/cLiF-NiHdP0" frameborder="0" allowfullscreen></iframe>
+<P STYLE="margin-bottom: 0cm"><SPAN >If
 your browser does not support HTML5 file api or file reader, try an
-older snem based port</span></font></p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="http://www.b81.org/~tjw/xnes">old
-xnes</a> with public domain roms</span></font></p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="http://www.b81.org/~tjw/smw">old
-xnes</a> with Super Mario World</span></font></p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><br/>
-
-</p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US">Links:</span></font></p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="https://github.com/kripken/emscripten/wiki/">Emscripten</a></span></font></p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="http://www.tommowalker.co.uk/snem.html">SNEM</a></span></font></p>
-<p style="margin-bottom: 0cm"><font face="Liberation Serif, serif"><span lang="en-US"><a href="http://www.snes9x.com/">Snes9x</a></span></font></p>
-</body>
-</html>
+older snem based port</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.b81.org/~tjw/xnes">old
+xnes</A> with public domain roms</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.b81.org/~tjw/smw">old
+xnes</A> with Super Mario World</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN >Links:</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="https://github.com/kripken/emscripten/wiki/">Emscripten</A></SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.tommowalker.co.uk/snem.html">SNEM</A></SPAN></P>
+<P STYLE="margin-bottom: 0cm"><SPAN ><A HREF="http://www.snes9x.com/">Snes9x</A></SPAN></P>
+</BODY>
+</HTML>
