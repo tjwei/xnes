@@ -332,8 +332,9 @@ bool S9xVerifyControllers (void);
 // free() the returned string after you're done with it.
 
 char * S9xGetCommandName (s9xcommand_t command);
-s9xcommand_t S9xGetCommandT (const char *name);
-
+extern "C" {
+s9xcommand_t S9xGetCommandT (const char *name) __attribute__((used));
+}
 // Returns an array of strings naming all the snes9x commands.
 // Note that this is only the strings for S9xButtonCommand!
 // The idea is that this would be used for a pull-down list in a config GUI. DO NOT free() the returned value.
@@ -349,10 +350,10 @@ void S9xUnmapID (uint32 id);
 // If a button is mapped with poll=TRUE, then S9xPollButton will be called whenever snes9x feels a need for that mapping.
 // Otherwise, snes9x will assume you will call S9xReportButton() whenever the button state changes.
 // S9xMapButton() will fail and return FALSE if mapping.type isn't an S9xButton* type.
-
-bool S9xMapButton (uint32 id, s9xcommand_t mapping, bool poll);
-void S9xReportButton (uint32 id, bool pressed);
-
+extern "C"{
+bool S9xMapButton (uint32 id, s9xcommand_t mapping, bool poll) __attribute__((used));
+void S9xReportButton (uint32 id, bool pressed) __attribute__((used));
+}
 // Pointer mapping functions.
 // If a pointer is mapped with poll=TRUE, then S9xPollPointer will be called whenever snes9x feels a need for that mapping.
 // Otherwise, snes9x will assume you will call S9xReportPointer() whenever the pointer position changes.
