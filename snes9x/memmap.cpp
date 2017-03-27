@@ -195,6 +195,7 @@
 #include "sdd1.h"
 #include "srtc.h"
 #include "controls.h"
+#include "emscripten.h"
 #ifdef FANCY
 #include "cheats.h"
 #include "movie.h"
@@ -1523,7 +1524,7 @@ bool8 CMemory::LoadROM (const char *filename)
 
 	ZeroMemory(ROM, MAX_ROM_SIZE);
 	ZeroMemory(&Multi, sizeof(Multi));
- 
+
 again:
 	Settings.DisplayColor = BUILD_PIXEL(31, 31, 31);
 	SET_UI_COLOR(255, 255, 255);
@@ -2142,9 +2143,9 @@ bool8 CMemory::SaveSRAM (const char *filename)
 		}
 
 		strcpy(ROMFilename, temp);
-    }
+  }
 
-    size = SRAMSize ? (1 << (SRAMSize + 3)) * 128 : 0;
+  size = SRAMSize ? (1 << (SRAMSize + 3)) * 128 : 0;
 	if (size > 0x20000)
 		size = 0x20000;
 
@@ -2163,6 +2164,16 @@ bool8 CMemory::SaveSRAM (const char *filename)
 			if (Settings.SRTC || Settings.SPC7110RTC)
 				SaveSRTC();
 
+      EM_ASM(
+				FS.syncfs(false, function(err) {
+					if (err) {
+						console.log("Error saving sram file.");
+						console.log(err);
+					} else {
+						console.log("File system synced");
+					}
+				});
+			);
 			return (TRUE);
 		}
 	}
@@ -2321,7 +2332,7 @@ void CMemory::InitROM (void)
 	Settings.SETA = 0;
 	Settings.SRTC = FALSE;
 	Settings.BS = FALSE;
-	
+
 	SuperFX.nRomBanks = CalculatedSize >> 15;
 
 	//// Parse ROM header and read ROM informatoin
@@ -3321,7 +3332,7 @@ void CMemory::Map_SPC7110HiROMMap (void)
 	map_System();
 
 	map_index(0x00, 0x00, 0x6000, 0x7fff, MAP_HIROM_SRAM, MAP_TYPE_RAM);
-	map_hirom(0x00, 0x0f, 0x8000, 0xffff, CalculatedSize);	
+	map_hirom(0x00, 0x0f, 0x8000, 0xffff, CalculatedSize);
 	map_index(0x30, 0x30, 0x6000, 0x7fff, MAP_HIROM_SRAM, MAP_TYPE_RAM);
 	map_index(0x50, 0x50, 0x0000, 0xffff, MAP_SPC7110_DRAM, MAP_TYPE_ROM);
 	map_hirom(0x80, 0x8f, 0x8000, 0xffff, CalculatedSize);
