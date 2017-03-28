@@ -594,6 +594,17 @@ void reboot_emulator(char *filename){
 
 	NSRTControllerSetup();
 
+	printf("Attempting to load SRAM %s.\n", S9xGetFilename(".srm", SRAM_DIR));
+	bool8 sramloaded = Memory.LoadSRAM(S9xGetFilename(".srm", SRAM_DIR));
+	if (sramloaded)
+	{
+		printf("Load successful.\n");
+	}
+	else
+	{
+		printf("Load failed.\n");
+	}
+
 	CPU.Flags = saved_flags;
 	Settings.StopEmulation = FALSE;
 
@@ -640,8 +651,9 @@ int main (int argc, char **argv)
 
 	EM_ASM(
 		console.log('Syncing file system...');
-		FS.mkdir('/sram');
-		FS.mount(IDBFS, {}, '/sram');
+		FS.mkdir('/home/web_user/.snes9x');
+		FS.mkdir('/home/web_user/.snes9x/sram');
+		FS.mount(IDBFS, {}, '/home/web_user/.snes9x/sram');
 		FS.syncfs(true, function(err) {
 			if (err) {
 				console.log(err);
@@ -728,6 +740,17 @@ int main (int argc, char **argv)
 	}
 
 	NSRTControllerSetup();
+
+	printf("Attempting to load SRAM %s.\n", S9xGetFilename(".srm", SRAM_DIR));
+	bool8 sramloaded = Memory.LoadSRAM(S9xGetFilename(".srm", SRAM_DIR));
+	if (sramloaded)
+	{
+		printf("Load successful.\n");
+	}
+	else
+	{
+		printf("Load failed.\n");
+	}
 
 	CPU.Flags = saved_flags;
 	Settings.StopEmulation = FALSE;

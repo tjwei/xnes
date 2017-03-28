@@ -179,6 +179,7 @@
 #include <string>
 #include <numeric>
 #include <assert.h>
+#include <errno.h>
 
 #ifdef UNZIP_SUPPORT
 #include "unzip/unzip.h"
@@ -2151,13 +2152,16 @@ bool8 CMemory::SaveSRAM (const char *filename)
 
 	if (size)
 	{
+		printf("Opening file %s for writing.\n", sramName);
 		file = fopen(sramName, "wb");
 		if (file)
 		{
 			size_t	ignore;
-			ignore = fwrite((char *) SRAM, size, 1, file);
+			printf("Writing file %s.\n", file);
+			ignore = fwrite((char *) SRAM, 1, size, file);
 			fclose(file);
 		#ifdef __linux
+		  printf("Changing permissions for file %s.\n", file);
 			ignore = chown(sramName, getuid(), getgid());
 		#endif
 
@@ -2176,6 +2180,15 @@ bool8 CMemory::SaveSRAM (const char *filename)
 			);
 			return (TRUE);
 		}
+		else
+		{
+			printf("Attempted to write file but no file ptr is NULL, ERR %d.\n", errno);
+			errno = 0;
+		}
+	}
+	else
+	{
+		printf("Attempted to write file but size is zero.\n");
 	}
 
 	return (FALSE);
