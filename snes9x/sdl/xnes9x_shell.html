@@ -47,49 +47,45 @@
     </style>
   </head>
   <body>
-  <h1>
-  SNES9x compiled by emscripten
-  </h1>
+    <h1>SNES9x compiled by emscripten</h1>
   <div>
-  see <a href="http://github.com/tjwei/xnes">http://github.com/tjwei/xnes</a> for more information.
+    see <a href="http://github.com/tjwei/xnes">http://github.com/tjwei/xnes</a> for more information.
   </div>
-    <hr/>
+    <hr>
     <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
     <div class="emscripten" id="status">Downloading...</div>
     <div class="emscripten">
-      <progress value="0" max="100" id="progress" hidden=1></progress>  
+      <progress value="0" max="100" id="progress" hidden=1></progress>
     </div>
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     </div>
-    <hr/>
+    <hr>
     <div>
-    <input type="text" id="fps" size="5"/>
-    <input type="file" onchange="snes_readfile(this)" />
-    <input type="button" id="start" value="start" onclick="snes_main()" />
-    frameskip:
-    <input type="text" id="frameskip" size="5" value="0" />
-    <input type="button" value="+" onclick="frameskip_adjust(1)" />
-    <input type="button" value="-" onclick="frameskip_adjust(-1)" />
-    <input type="button" value="transparency" onclick="ToggleTransparency()" />
-        <input type="button" value="display framerate" onclick="ToggleDisplayFramerate()" />
+      <input type="text" id="fps" size="5"/>
+      <input type="file" onchange="snes_readfile(this)" />
+      <input type="button" id="start" value="start" onclick="snes_main()" />
+      frameskip:
+      <input type="text" id="frameskip" size="5" value="0" />
+      <input type="button" value="+" onclick="frameskip_adjust(1)" />
+      <input type="button" value="-" onclick="frameskip_adjust(-1)" />
+      <input type="button" value="transparency" onclick="ToggleTransparency()" />
+      <input type="button" value="display framerate" onclick="ToggleDisplayFramerate()" />
     </div>
     <div class="emscripten">
       <input type="checkbox" id="resize">Resize canvas
       <input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer
       &nbsp;&nbsp;&nbsp;
-      <input type="button" value="Fullscreen" onclick="Module.requestFullScreen(document.getElementById('pointerLock').checked, 
-                                                                                document.getElementById('resize').checked)">
+      <input type="button" value="Fullscreen" onclick="Module.requestFullScreen(document.getElementById('pointerLock').checked,
+                                                                          document.getElementById('resize').checked)">
     </div>
-    
-    <hr/>
+    <hr>
     <textarea class="emscripten" id="output" rows="8"></textarea>
     <hr>
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
-
       var Module = {
         preRun: [],
         postRun: [],
@@ -154,6 +150,7 @@
           Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
         }
       };
+
       Module.setStatus('Downloading...');
       window.onerror = function() {
         Module.setStatus('Exception thrown, see JavaScript console');
@@ -164,62 +161,68 @@
       };
     </script>
     {{{ SCRIPT }}}
-    
-    
-       <script type="text/javascript">
-           cout_print = Module.print
-	   frameskip=0	   
-	   frameskip_text=document.getElementById("frameskip")	   
-	   frameskip_text.value=frameskip
-	   snes_transparency=1
-	   function ToggleTransparency(){
-		snes_transparency=!snes_transparency
-		Module._set_transparency(snes_transparency)		  	      
-	      cout_print("Transparency is now "+(snes_transparency ? "on" : "off"))
-	   }	   
-    </script>
-    <script>           
-            if (window.File && window.FileReader && window.FileList && window.Blob) {
-	    } else {
-	        alert('The File APIs are not fully supported in this browser.')
-                cout_print('The File APIs are not fully supported in this browser.');
+
+
+    <script type="text/javascript">
+      var cout_print = Module.print,
+	        frameskip=0,
+	        frameskip_text=document.getElementById("frameskip"),
+	        frameskip_text.value=frameskip,
+	        snes_transparency=1;
+
+      function ToggleTransparency() {
+		    snes_transparency = !snes_transparency;
+		    Module._set_transparency(snes_transparency);
+	      cout_print("Transparency is now "+(snes_transparency ? "on" : "off"));
 	    }
-           function frameskip_adjust(n){
-	      frameskip+=n
-	      if(frameskip<0) frameskip=0
-	      frameskip_text.value=frameskip
+
+      if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+	      alert('The File APIs are not fully supported in this browser.')
+        cout_print('The File APIs are not fully supported in this browser.');
+	    }
+
+      function frameskip_adjust(n) {
+	      frameskip += n;
+	      if(frameskip<0) {
+          frameskip = 0;
+        }
+
+	      frameskip_text.value = frameskip;
 	      set_frameskip(frameskip);
-           }
-           function snes_readfile(controller){
-	      var f=controller.files[0]
-	      cout_print(f.name)
-	      var reader= new FileReader()
-	      reader.onprogress = function(e){
-		if (e.lengthComputable){
-		    cout_print(Math.round((e.loaded / e.total) * 100)+"%")
-		}
-		else
-		  count_print(e.loaded+"bytes")
-		document.getElementById("start").disabled=false
-		
-	      }
-	      reader.onload = function(e) {		 
-		  cout_print("_.smc loaded")		  
-		  Module.FS_createDataFile("/", "_.smc", new Uint8Array(this.result) , true, true);
-		}	      
-              reader.readAsArrayBuffer(f)
-           }           
-           function snes_main(){            
-            set_frameskip=Module.cwrap('set_frameskip', 'number', ['number'])
-	    ToggleDisplayFramerate = Module._toggle_display_framerate
-           document.getElementById("start").disabled=true                  
-	   reboot_romnum=-1	  	   
-	   frames=0
-	   fps_text=document.getElementById("fps")
-           frameskipped=0
-	   Module._run();
-           }
-           
+      }
+
+      function snes_readfile(controller){
+	      var f = controller.files[0];
+	      cout_print(f.name);
+	      var reader= new FileReader();
+	      reader.onprogress = function(e) {
+		      if (e.lengthComputable){
+		        cout_print(Math.round((e.loaded / e.total) * 100) + "%");
+		      } else {
+            count_print(e.loaded + "bytes");
+          }
+          document.getElementById("start").disabled=false
+	      };
+
+	      reader.onload = function(e) {
+		      cout_print("_.smc loaded");
+		      Module.FS_createDataFile("/", "_.smc", new Uint8Array(this.result) , true, true);
+		    };
+
+        reader.readAsArrayBuffer(f);
+      }
+
+      function snes_main() {
+        set_frameskip=Module.cwrap('set_frameskip', 'number', ['number']);
+	      ToggleDisplayFramerate = Module._toggle_display_framerate;
+        document.getElementById("start").disabled = true;
+	      reboot_romnum =- 1;
+	      frames = 0;
+	      fps_text = document.getElementById("fps");
+        frameskipped = 0;
+	      Module._run();
+      }
+
     </script>
     <div>
     <p> .smc rom are needed in order to play.  </p>
