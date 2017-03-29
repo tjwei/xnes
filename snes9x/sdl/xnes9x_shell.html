@@ -44,13 +44,67 @@
         to {transform: rotate(360deg);}
       }
 
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      .toggle-switch input {display:none;}
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      input:checked + .toggle-slider {
+        background-color: #2196F3;
+      }
+
+      input:focus + .toggle-slider {
+        box-shadow: 0 0 1px #2196F3;
+      }
+
+      input:checked + .toggle-slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+
+      .toggle-slider.round {
+        border-radius: 34px;
+      }
+
+      .toggle-slider.round:before {
+        border-radius: 50%;
+      }
     </style>
   </head>
   <body>
     <h1>SNES9x compiled by emscripten</h1>
-  <div>
-    see <a href="http://github.com/tjwei/xnes">http://github.com/tjwei/xnes</a> for more information.
-  </div>
+    <div>
+      see <a href="http://github.com/tjwei/xnes">http://github.com/tjwei/xnes</a> for more information.
+    </div>
     <hr>
     <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
     <div class="emscripten" id="status">Downloading...</div>
@@ -62,26 +116,67 @@
     </div>
     <hr>
     <div>
-      <input type="text" id="fps" size="5"/>
-      <input type="file" onchange="snes_readfile(this)" />
-      <input type="button" id="start" value="start" onclick="snes_main()" />
-      frameskip:
-      <input type="text" id="frameskip" size="5" value="0" />
-      <input type="button" value="+" onclick="frameskip_adjust(1)" />
-      <input type="button" value="-" onclick="frameskip_adjust(-1)" />
-      <input type="button" value="transparency" onclick="ToggleTransparency()" />
-      <input type="button" value="display framerate" onclick="ToggleDisplayFramerate()" />
+      <!-- <input type="text" id="fps" size="5"/> -->
+      <input type="file" id="file-selector">
+      <button id="start">Start</button>
+      <label>Current Frameskip</label>
+      <span id="current-frameskip">0</span>
+      <button id="frameskip-increment">+</button>
+      <button id="frameskip-decrement">-</button>
+      <label>Transparency</label>
+      <label class="switch">
+        <input type="checkbox" id="transparency-toggle">
+        <div class="slider round"></div>
+      </label>
+      <label>Display FPS</label>
+      <label class="switch">
+        <input type="checkbox" id="fps-toggle">
+        <div class="slider round"></div>
+      </label>
+      <div class="emscripten">
+        <input type="checkbox" id="resize">Resize canvas
+        <input type="checkbox" id="pointer-lock" checked>Lock/hide mouse pointer
+        <button id="fullscreen">Fullscreen</button>
+      </div>
+      <hr>
+      <textarea class="emscripten" id="output" rows="8"></textarea>
+      <hr>
     </div>
-    <div class="emscripten">
-      <input type="checkbox" id="resize">Resize canvas
-      <input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer
-      &nbsp;&nbsp;&nbsp;
-      <input type="button" value="Fullscreen" onclick="Module.requestFullScreen(document.getElementById('pointerLock').checked,
-                                                                          document.getElementById('resize').checked)">
-    </div>
-    <hr>
-    <textarea class="emscripten" id="output" rows="8"></textarea>
-    <hr>
+    <p>.smc ROM required to play.</p>
+    <p>
+      You may need to click on the canvas or click the full screen button to let the canvas get the
+      focus. Keys are mapped as follows:
+    </p>
+    <!-- <code>
+      <pre>
+        S9xMapButton(SDLK_RIGHT, S9xGetCommandT("Joypad1 Right"), false);
+        S9xMapButton(SDLK_LEFT, S9xGetCommandT("Joypad1 Left"), false);
+        S9xMapButton(SDLK_DOWN, S9xGetCommandT("Joypad1 Down"), false);
+        S9xMapButton(SDLK_UP, S9xGetCommandT("Joypad1 Up"), false);
+        S9xMapButton(SDLK_RETURN, S9xGetCommandT("Joypad1 Start"), false);
+        S9xMapButton(SDLK_SPACE,  S9xGetCommandT("Joypad1 Select"), false);
+        S9xMapButton(SDLK_d, S9xGetCommandT("Joypad1 A"), false);
+        S9xMapButton(SDLK_c, S9xGetCommandT("Joypad1 B"), false);
+        S9xMapButton(SDLK_s, S9xGetCommandT("Joypad1 X"), false);
+        S9xMapButton(SDLK_x, S9xGetCommandT("Joypad1 Y"), false);
+        S9xMapButton(SDLK_a, S9xGetCommandT("Joypad1 L"), false);
+        S9xMapButton(SDLK_z, S9xGetCommandT("Joypad1 R"), false);
+      </pre>
+    </code> -->
+    <table border="1">
+      <tr><td>Left:</td><td>Left Arrow</td></tr>
+      <tr><td>Right:</td><td>Right Arrow</td></tr>
+      <tr><td>Up:</td><td>Up Arrow</td></tr>
+      <tr><td>Down:</td><td>Down Arrow</td></tr>
+      <tr><td>Start:</td><td>Return</td></tr>
+      <tr><td>Select:</td><td>Space</td></tr>
+      <tr><td>A:</td><td>d</td></tr>
+      <tr><td>B:</td><td>c</td></tr>
+      <tr><td>X:</td><td>s</td></tr>
+      <tr><td>Y:</td><td>x</td></tr>
+      <tr><td>L:</td><td>a</td></tr>
+      <tr><td>R:</td><td>z</td></tr>
+    </table>
     <script>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
@@ -91,28 +186,16 @@
         postRun: [],
         print: (function() {
           var element = document.getElementById('output');
-          if (element) element.value = ''; // clear browser cache
+          element.value = ''; // clear browser cache
           return function(text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            // These replacements are necessary if you render to raw HTML
-            //text = text.replace(/&/g, "&amp;");
-            //text = text.replace(/</g, "&lt;");
-            //text = text.replace(/>/g, "&gt;");
-            //text = text.replace('\n', '<br>', 'g');
-            console.log(text);
-            if (element) {
-              element.value += text + "\n";
-              element.scrollTop = element.scrollHeight; // focus on bottom
-            }
+            var txt = arguments.length > 1 ? [].slice.call(arguments).join(' ') : text;
+            element.value += txt + "\n";
+            element.scrollTop = element.scrollHeight; // focus on bottom
           };
         })(),
         printErr: function(text) {
-          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-          if (0) { // XXX disabled for safety typeof dump == 'function') {
-            dump(text + '\n'); // fast, straight to the real console
-          } else {
-            console.error(text);
-          }
+          var txt = arguments.length > 1 ? [].slice.call(arguments).join(' ') : text;
+          console.error(txt);
         },
         canvas: (function() {
           var canvas = document.getElementById('canvas');
@@ -120,7 +203,10 @@
           // As a default initial behavior, pop up an alert when webgl context is lost. To make your
           // application robust, you may want to override this behavior before shipping!
           // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
-          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+          canvas.addEventListener("webglcontextlost", function(e) {
+            alert('WebGL context lost. You will need to reload the page.');
+            e.preventDefault();
+          }, false);
 
           return canvas;
         })(),
@@ -129,7 +215,7 @@
           if (text === Module.setStatus.text) return;
           var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
           var now = Date.now();
-          if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m && now - Date.now() < 30) return; // if this is a progress update, skip if too soon
           if (m) {
             text = m[1];
             progressElement.value = parseInt(m[2])*100;
@@ -147,7 +233,10 @@
         totalDependencies: 0,
         monitorRunDependencies: function(left) {
           this.totalDependencies = Math.max(this.totalDependencies, left);
-          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+          Module.setStatus(left ?
+            'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' :
+            'All downloads complete.'
+          );
         }
       };
 
@@ -161,40 +250,59 @@
       };
     </script>
     {{{ SCRIPT }}}
-
-
     <script>
-      var cout_print = Module.print,
-	        frameskip=0,
-	        frameskip_text=document.getElementById("frameskip"),
-	        frameskip_text.value=frameskip,
-	        snes_transparency=1;
+      var startbttn = document.getElementById('start');
+      var fileChooser = document.getElementById('file-selector');
+      var frameskipInc = document.getElementById('frameskip-increment');
+      var frameskipDec = document.getElementById('frameskip-decrement');
+      var frameskipSpan = document.getElementById('current-frameskip');
+      var transToggle = document.getElementById('transparency-toggle');
+      var fpsToggle = document.getElementById('fps-toggle');
+      var fullscreen = document.getElementById('fullscreen');
+      var cout_print = Module.print;
 
-      function ToggleTransparency() {
-		    snes_transparency = !snes_transparency;
-		    Module._set_transparency(snes_transparency);
-	      cout_print("Transparency is now "+(snes_transparency ? "on" : "off"));
-	    }
+      var frameskipAdjust = (function() {
+        var frameskip = 0;
+        var set_frameskip = Module.cwrap('set_frameskip', 'number', ['number']);
+        var fn = function(n) {
+          return function(evt) {
+            frameskip += n;
+            if (frameskip < 0) frameskip = 0;
+            frameskipSpan.textContent = '' + frameskip;
+            set_frameskip(frameskip);
+            return frameskip;
+          }
+        };
 
-      if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-	      alert('The File APIs are not fully supported in this browser.')
-        cout_print('The File APIs are not fully supported in this browser.');
-	    }
-
-      function frameskip_adjust(n) {
-	      frameskip += n;
-	      if(frameskip<0) {
+        fn.reset = function() {
           frameskip = 0;
-        }
+          frameskipSpan.textContent = '0';
+          set_frameskip(frameskip);
+        };
 
-	      frameskip_text.value = frameskip;
-	      set_frameskip(frameskip);
-      }
+        return fn;
+      })();
 
-      function snes_readfile(controller){
-	      var f = controller.files[0];
+      var toggleTransparency = (function() {
+        var snes_transparency = 1;
+        return function() {
+          snes_transparency = !snes_transparency;
+          Module._set_transparency(snes_transparency);
+          cout_print("Transparency is now " + (snes_transparency ? "on" : "off"));
+        };
+      })();
+
+      var goFullScreen = function() {
+        var pointerlock = document.getElementById('pointer-lock').checked;
+        var resize = document.getElementById('resize').checked;
+        // double-checked, this does expect js boolean values
+        Module.requestFullScreen(pointerlock, resize);
+      };
+
+      var snesReadFile = function(controller) {
+        var f = controller.files[0];
 	      cout_print(f.name);
-	      var reader= new FileReader();
+	      var reader = new FileReader();
 	      reader.onprogress = function(e) {
 		      if (e.lengthComputable){
 		        cout_print(Math.round((e.loaded / e.total) * 100) + "%");
@@ -203,46 +311,27 @@
           }
           document.getElementById("start").disabled=false
 	      };
-
 	      reader.onload = function(e) {
 		      cout_print("_.smc loaded");
 		      Module.FS_createDataFile("/", "_.smc", new Uint8Array(this.result) , true, true);
 		    };
-
         reader.readAsArrayBuffer(f);
-      }
+      };
 
-      function snes_main() {
-        set_frameskip=Module.cwrap('set_frameskip', 'number', ['number']);
-	      ToggleDisplayFramerate = Module._toggle_display_framerate;
+      var snesMain = function() {
         document.getElementById("start").disabled = true;
-	      reboot_romnum =- 1;
-	      frames = 0;
-	      fps_text = document.getElementById("fps");
-        frameskipped = 0;
+	      // reboot_romnum = -1; // seems unnecessary?
+	      frameskipAdjust.reset();
 	      Module._run();
-      }
+      };
 
+      fpsToggle.addEventListener('click', Module._toggle_display_framerate);
+      startbttn.addEventListener('click', snesMain);
+      fileChooser.addEventListener('change', snesReadFile);
+      frameskipInc.addEventListener('click', frameskipAdjust(1));
+      frameskipDec.addEventListener('click', frameskipAdjust(-1));
+      transToggle.addEventListener('click', toggleTransparency);
+      fullscreen.addEventListener('click', goFullScreen);
     </script>
-    <div>
-    <p> .smc rom are needed in order to play.  </p>
-    Keys are mapped as followings, you may need to click on the canvas or click the full screen button to let the canvas get the focus.
-<code>
-<pre>
-    S9xMapButton(SDLK_RIGHT, S9xGetCommandT("Joypad1 Right"), false);
-    S9xMapButton(SDLK_LEFT, S9xGetCommandT("Joypad1 Left"), false);
-    S9xMapButton(SDLK_DOWN, S9xGetCommandT("Joypad1 Down"), false);
-    S9xMapButton(SDLK_UP, S9xGetCommandT("Joypad1 Up"), false);
-    S9xMapButton(SDLK_RETURN, S9xGetCommandT("Joypad1 Start"), false);
-    S9xMapButton(SDLK_SPACE,  S9xGetCommandT("Joypad1 Select"), false);
-    S9xMapButton(SDLK_d, S9xGetCommandT("Joypad1 A"), false);
-    S9xMapButton(SDLK_c, S9xGetCommandT("Joypad1 B"), false);
-    S9xMapButton(SDLK_s, S9xGetCommandT("Joypad1 X"), false);
-    S9xMapButton(SDLK_x, S9xGetCommandT("Joypad1 Y"), false);
-    S9xMapButton(SDLK_a, S9xGetCommandT("Joypad1 L"), false);
-    S9xMapButton(SDLK_z, S9xGetCommandT("Joypad1 R"), false);
-</pre>
-</code>
-    <div>
   </body>
 </html>
