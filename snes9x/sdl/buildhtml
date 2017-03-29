@@ -11,5 +11,5 @@ emcc -O3 -s EXPORTED_FUNCTIONS="['_main', '_set_frameskip', '_set_transparency',
  -o $OUT/snes9x.html \
  -DUSE_SDL \
  -DHTML $INCLUDES $CCFLAGS $OBJECTS \
- -lm -lSDL -s TOTAL_MEMORY=34777216  \
+ -lm -lSDL -s TOTAL_MEMORY=50331648  \
  -DSOUND
