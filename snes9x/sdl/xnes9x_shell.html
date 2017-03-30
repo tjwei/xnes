@@ -275,6 +275,8 @@
         frameskipDec.addEventListener('click', frameskipAdjust(-1));
         transToggle.addEventListener('click', toggleTransparency);
         fullscreen.addEventListener('click', goFullScreen);
+        // make sure we sync state before tab closes
+        window.addEventListener('beforeunload', Module._S9xAutoSaveSRAM);
       };
     </script>
     {{{ SCRIPT }}}
