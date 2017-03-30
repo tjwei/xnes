@@ -566,7 +566,7 @@ void S9xParseArg (char **argv, int &i, int argc){
 
 #ifdef HTML
 extern "C" void toggle_display_framerate() __attribute__((used));
-extern "C" void run() __attribute__((used));
+extern "C" void run(char*) __attribute__((used));
 extern "C" int set_frameskip(int) __attribute__((used));
 int set_frameskip(int n){
 Settings.SkipFrames = n;
@@ -581,10 +581,9 @@ void mainloop(){
     S9xMainLoop();
 }
 void reboot_emulator(char *filename){
-    	uint32	saved_flags = CPU.Flags;
+  uint32 saved_flags = CPU.Flags;
 	bool8	loaded = FALSE;
-
-		loaded = Memory.LoadROM(filename);
+  loaded = Memory.LoadROM(filename);
 
 	if (!loaded)
 	{
@@ -624,8 +623,8 @@ void* set_transparency(int i){
     Settings.Transparency=i;
     return (void *)&Settings;
 }
-void run(){
-    reboot_emulator("_.smc");
+void run(char *filename){
+    reboot_emulator(filename);
     #ifdef SOUND
     printf("S9xSetSoundMute(FALSE)\n");
     S9xSetSoundMute(FALSE);
@@ -659,12 +658,12 @@ int main (int argc, char **argv)
 				console.log(err);
 			} else {
 				console.log('File system synced.');
+				window.initSNES();
 			}
 		});
 	);
 
 	ZeroMemory(&Settings, sizeof(Settings));
-	// Settings.AutoSaveDelay = 1;
 	Settings.MouseMaster = TRUE;
 	Settings.SuperScopeMaster = TRUE;
 	Settings.JustifierMaster = TRUE;
@@ -682,23 +681,23 @@ int main (int argc, char **argv)
 	Settings.StopEmulation = TRUE;
 	Settings.WrongMovieStateProtection = TRUE;
 	Settings.DumpStreamsMaxFrames = -1;
-        Settings.DisplayFrameRate = TRUE;
-        Settings.AutoDisplayMessages = TRUE;
+  Settings.DisplayFrameRate = TRUE;
+  Settings.AutoDisplayMessages = TRUE;
 	Settings.StretchScreenshots = 1;
 	Settings.SnapshotScreenshots = TRUE;
 	Settings.SkipFrames = 0;
 	Settings.TurboSkipFrames = 15;
 	Settings.CartAName[0] = 0;
 	Settings.CartBName[0] = 0;
-    Settings.NoPatch= TRUE;
-    Settings.SoundSync                  =  FALSE;
+  Settings.NoPatch= TRUE;
+  Settings.SoundSync =  FALSE;
 #ifdef SOUND
-	Settings.Mute                       =  FALSE;
-    Settings.SoundPlaybackRate = 22100;
+	Settings.Mute = FALSE;
+  Settings.SoundPlaybackRate = 22100;
 	Settings.SoundInputRate = 22100;
 #else
-    Settings.Mute                       =  TRUE;
-    Settings.SoundPlaybackRate = 16000;
+  Settings.Mute = TRUE;
+  Settings.SoundPlaybackRate = 16000;
 	Settings.SoundInputRate = 16000;
 #endif
 	CPU.Flags = 0;    ;

@@ -43,61 +43,6 @@
         from {transform: rotate(0deg);}
         to {transform: rotate(360deg);}
       }
-
-      .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-      }
-
-      .toggle-switch input {display:none;}
-
-      .toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: .4s;
-        transition: .4s;
-      }
-
-      .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
-      }
-
-      input:checked + .toggle-slider {
-        background-color: #2196F3;
-      }
-
-      input:focus + .toggle-slider {
-        box-shadow: 0 0 1px #2196F3;
-      }
-
-      input:checked + .toggle-slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-      }
-
-      .toggle-slider.round {
-        border-radius: 34px;
-      }
-
-      .toggle-slider.round:before {
-        border-radius: 50%;
-      }
     </style>
   </head>
   <body>
@@ -124,15 +69,9 @@
       <button id="frameskip-increment">+</button>
       <button id="frameskip-decrement">-</button>
       <label>Transparency</label>
-      <label class="switch">
-        <input type="checkbox" id="transparency-toggle">
-        <div class="slider round"></div>
-      </label>
+      <input type="checkbox" id="transparency-toggle">
       <label>Display FPS</label>
-      <label class="switch">
-        <input type="checkbox" id="fps-toggle">
-        <div class="slider round"></div>
-      </label>
+      <input type="checkbox" id="fps-toggle" checked>
       <div class="emscripten">
         <input type="checkbox" id="resize">Resize canvas
         <input type="checkbox" id="pointer-lock" checked>Lock/hide mouse pointer
@@ -164,24 +103,19 @@
       </pre>
     </code> -->
     <table border="1">
-      <tr><td>Left:</td><td>Left Arrow</td></tr>
-      <tr><td>Right:</td><td>Right Arrow</td></tr>
-      <tr><td>Up:</td><td>Up Arrow</td></tr>
-      <tr><td>Down:</td><td>Down Arrow</td></tr>
-      <tr><td>Start:</td><td>Return</td></tr>
-      <tr><td>Select:</td><td>Space</td></tr>
-      <tr><td>A:</td><td>d</td></tr>
-      <tr><td>B:</td><td>c</td></tr>
-      <tr><td>X:</td><td>s</td></tr>
-      <tr><td>Y:</td><td>x</td></tr>
-      <tr><td>L:</td><td>a</td></tr>
-      <tr><td>R:</td><td>z</td></tr>
+      <tr><td>Button:</td><td>Key:</td><td style="color:white;">---</td><td>Button:</td><td>Key:</td></tr>
+      <tr><td>Left:</td><td>Left Arrow</td><td style="color:white;">---</td><td>A:</td><td>d</td></tr>
+      <tr><td>Right:</td><td>Right Arrow</td><td style="color:white;">---</td><td>B:</td><td>c</td></tr>
+      <tr><td>Up:</td><td>Up Arrow</td><td style="color:white;">---</td><td>X:</td><td>s</td></tr>
+      <tr><td>Down:</td><td>Down Arrow</td><td style="color:white;">---</td><td>Y:</td><td>x</td></tr>
+      <tr><td>Start:</td><td>Return</td><td style="color:white;">---</td><td>L:</td><td>a</td></tr>
+      <tr><td>Select:</td><td>Space</td><td style="color:white;">---</td><td>R:</td><td>z</td></tr>
     </table>
     <script>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
-      var Module = {
+      window.Module = {
         preRun: [],
         postRun: [],
         print: (function() {
@@ -248,90 +182,101 @@
           if (text) Module.printErr('[post-exception status] ' + text);
         };
       };
+
+      // Wires up the event handlers, called from compiled c code to give file
+      // system a chance to sync.
+      window.initSNES = function() {
+        var startbttn = document.getElementById('start');
+        var fileChooser = document.getElementById('file-selector');
+        var frameskipInc = document.getElementById('frameskip-increment');
+        var frameskipDec = document.getElementById('frameskip-decrement');
+        var frameskipSpan = document.getElementById('current-frameskip');
+        var transToggle = document.getElementById('transparency-toggle');
+        var fpsToggle = document.getElementById('fps-toggle');
+        var fullscreen = document.getElementById('fullscreen');
+        var cout_print = Module.print;
+        var filename = "";
+
+        var frameskipAdjust = (function() {
+          var frameskip = 0;
+          var set_frameskip = Module.cwrap('set_frameskip', 'number', ['number']);;
+          var fn = function(n) {
+            return function(evt) {
+              frameskip += n;
+              if (frameskip < 0) frameskip = 0;
+              frameskipSpan.textContent = '' + frameskip;
+              set_frameskip(frameskip);
+              return frameskip;
+            }
+          };
+
+          fn.reset = function() {
+            frameskip = 0;
+            frameskipSpan.textContent = '0';
+            set_frameskip(frameskip);
+          };
+
+          return fn;
+        })();
+
+        var toggleTransparency = (function() {
+          var snes_transparency = 1;
+          return function() {
+            snes_transparency = !snes_transparency;
+            Module._set_transparency(snes_transparency);
+            cout_print("Transparency is now " + (snes_transparency ? "on" : "off"));
+          };
+        })();
+
+        var goFullScreen = function() {
+          var pointerlock = document.getElementById('pointer-lock').checked;
+          var resize = document.getElementById('resize').checked;
+          // double-checked, this does expect js boolean values
+          Module.requestFullScreen(pointerlock, resize);
+        };
+
+        var snesReadFile = function(evt) {
+          var f = evt.currentTarget.files[0];
+  	      cout_print(f.name);
+          filename = f.name;
+  	      var reader = new FileReader();
+  	      reader.onprogress = function(e) {
+  		      if (e.lengthComputable){
+  		        cout_print(Math.round((e.loaded / e.total) * 100) + "%");
+  		      } else {
+              count_print(e.loaded + "bytes");
+            }
+            document.getElementById("start").disabled=false
+  	      };
+  	      reader.onload = function(e) {
+  		      cout_print(f.name + " loaded");
+  		      Module.FS_createDataFile("/", f.name, new Uint8Array(this.result) , true, true);
+  		    };
+          reader.readAsArrayBuffer(f);
+        };
+
+        var snesMain = (function() {
+          var interval = null;
+          var run = Module.cwrap('run', null, ['string']);
+          return function() {
+            clearInterval(interval);
+            interval = setInterval(Module._S9xAutoSaveSRAM, 10000);
+            document.getElementById("start").disabled = true;
+    	      // reboot_romnum = -1; // seems unnecessary?
+    	      frameskipAdjust.reset();
+    	      run(filename);
+          };
+        })();
+
+        fpsToggle.addEventListener('click', Module._toggle_display_framerate);
+        startbttn.addEventListener('click', snesMain);
+        fileChooser.addEventListener('change', snesReadFile);
+        frameskipInc.addEventListener('click', frameskipAdjust(1));
+        frameskipDec.addEventListener('click', frameskipAdjust(-1));
+        transToggle.addEventListener('click', toggleTransparency);
+        fullscreen.addEventListener('click', goFullScreen);
+      };
     </script>
     {{{ SCRIPT }}}
-    <script>
-      var startbttn = document.getElementById('start');
-      var fileChooser = document.getElementById('file-selector');
-      var frameskipInc = document.getElementById('frameskip-increment');
-      var frameskipDec = document.getElementById('frameskip-decrement');
-      var frameskipSpan = document.getElementById('current-frameskip');
-      var transToggle = document.getElementById('transparency-toggle');
-      var fpsToggle = document.getElementById('fps-toggle');
-      var fullscreen = document.getElementById('fullscreen');
-      var cout_print = Module.print;
-
-      var frameskipAdjust = (function() {
-        var frameskip = 0;
-        var set_frameskip = Module.cwrap('set_frameskip', 'number', ['number']);
-        var fn = function(n) {
-          return function(evt) {
-            frameskip += n;
-            if (frameskip < 0) frameskip = 0;
-            frameskipSpan.textContent = '' + frameskip;
-            set_frameskip(frameskip);
-            return frameskip;
-          }
-        };
-
-        fn.reset = function() {
-          frameskip = 0;
-          frameskipSpan.textContent = '0';
-          set_frameskip(frameskip);
-        };
-
-        return fn;
-      })();
-
-      var toggleTransparency = (function() {
-        var snes_transparency = 1;
-        return function() {
-          snes_transparency = !snes_transparency;
-          Module._set_transparency(snes_transparency);
-          cout_print("Transparency is now " + (snes_transparency ? "on" : "off"));
-        };
-      })();
-
-      var goFullScreen = function() {
-        var pointerlock = document.getElementById('pointer-lock').checked;
-        var resize = document.getElementById('resize').checked;
-        // double-checked, this does expect js boolean values
-        Module.requestFullScreen(pointerlock, resize);
-      };
-
-      var snesReadFile = function(controller) {
-        var f = controller.files[0];
-	      cout_print(f.name);
-	      var reader = new FileReader();
-	      reader.onprogress = function(e) {
-		      if (e.lengthComputable){
-		        cout_print(Math.round((e.loaded / e.total) * 100) + "%");
-		      } else {
-            count_print(e.loaded + "bytes");
-          }
-          document.getElementById("start").disabled=false
-	      };
-	      reader.onload = function(e) {
-		      cout_print("_.smc loaded");
-		      Module.FS_createDataFile("/", "_.smc", new Uint8Array(this.result) , true, true);
-		    };
-        reader.readAsArrayBuffer(f);
-      };
-
-      var snesMain = function() {
-        document.getElementById("start").disabled = true;
-	      // reboot_romnum = -1; // seems unnecessary?
-	      frameskipAdjust.reset();
-	      Module._run();
-      };
-
-      fpsToggle.addEventListener('click', Module._toggle_display_framerate);
-      startbttn.addEventListener('click', snesMain);
-      fileChooser.addEventListener('change', snesReadFile);
-      frameskipInc.addEventListener('click', frameskipAdjust(1));
-      frameskipDec.addEventListener('click', frameskipAdjust(-1));
-      transToggle.addEventListener('click', toggleTransparency);
-      fullscreen.addEventListener('click', goFullScreen);
-    </script>
   </body>
 </html>
