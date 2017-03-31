@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en-us">
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>SNES9X</title>
+  <head>
+    <style>
+      BODY, HTML {
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+        overflow: hidden;
+      }
+
+      #menu {
+        width: 25%;
+        min-width: 300px;
+        height: 100%;
+        padding: 1%;
+        color: #666;
+        border-right: solid 1px #CCC;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 6000;
+        background-color: white;
+      }
+
+      #modal-backdrop {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 5900;
+        display: none;
+      }
+
+      #main-content {
+        position: absolute;
+        top: 2%;
+        left: 30%;
+        width: 70%;
+        height: 95%;
+      }
+
+      #content-title {
+        color: #999;
+        font-size: 40px;
+        width: 820px;
+        height: 60px;
+        border-bottom: solid 1px #CCC;
+      }
+
+      #canvas-wrapper {
+        border: 1px solid #CCC;
+        width: 820px;
+        height: 620px;
+        margin-top: 2%;
+      }
+
+      #game-canvas {
+        /*
+         * Following comment and border val are from orignal emscripten port. Although I doubt
+         * it matters (prob meant for desktop ports that use mouse), I've kept them.
+         */
+        /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+        border: 0px none;
+        /* end */
+        width: 800px;
+        height: 600px;
+        position: relative;
+        top: 10px;
+        left: 10px;
+      }
+
+      #load-file {
+        background-color: lightblue;
+        position: absolute;
+        top: 600px;
+        left: 782px;
+        z-index: 5800;
+        color: white;
+      }
+
+      #console-output {
+        width: 816px;
+        height: 15%;
+        min-height: 100px;
+        margin-top: 10px;
+        opacity: 0;
+      }
+
+      #hamburgler {
+        background: no-repeat center/90% url("./snes9x/icons/burger2.png");
+        position: absolute;
+        left: 20px;
+        top: 10px;
+        z-index: 5500;
+        width: 50px;
+        height: 50px;
+        display: none;
+        border: solid 1px #CCC;
+        border-radius: 5px;
+      }
+
+      .row {
+        width: 100%;
+        height: 50px;
+        border-bottom: solid 1px #CCC;
+        clear: both;
+        padding-top: 30px;
+      }
+
+      .linear {
+        display: inline-block;
+      }
+
+      .right-align {
+        float: right;
+        margin-left: 2%;
+      }
+
+      .small-round-bttn {
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 35px;
+        width: 40px;
+        height: 40px;
+        box-shadow: 1px 1px 10px #999;
+      }
+
+      .large-round-bttn {
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 72px;
+        text-align: center;
+        width: 80px;
+        height: 80px;
+        box-shadow: 3px 3px 20px #999;
+      }
+
+      .orange {
+        background-color: orange;
+        color: white;
+      }
+
+      .not-implemented {
+        color: #CCC;
+      }
+
+      .switch-toggle {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      .switch-toggle input {
+        display:none;
+      }
+
+      .slider-toggle {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        box-shadow: 1px 1px 10px #666;
+      }
+
+      .slider-toggle:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      input:checked + .slider-toggle {
+        background-color: orange;
+      }
+
+      input:focus + .slider-toggle {
+        box-shadow: 0 0 1px orange;
+      }
+
+      input:checked + .slider-toggle:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+
+      .slider-toggle.round {
+        border-radius: 34px;
+      }
+
+      .slider-toggle.round:before {
+        border-radius: 50%;
+      }
+
+      .menu-animation-in {
+        -webkit-transition: -webkit-transform: 500ms ease-out;
+        -moz-transition: -moz-transform 500ms ease-out;
+        -o-transition: -o-transform 500ms ease-out;
+        transition: transform 500ms ease-out;
+        -webkit-transform: translate(320px) !important;
+        -moz-transform:    translate(320px) !important;
+        -ms-transform:     translate(320px) !important;
+        -o-transform:      translate(320px) !important;
+        transform:         translate(320px) !important;
+      }
+
+      .menu-animation-out {
+        -webkit-transition: -webkit-transform: 500ms ease-in;
+        -moz-transition: -moz-transform 500ms ease-in;
+        -o-transition: -o-transform 500ms ease-in;
+        transition: transform 500ms ease-in;
+        -webkit-transform: translate(0px) !important;
+        -moz-transform:    translate(0px) !important;
+        -ms-transform:     translate(0px) !important;
+        -o-transform:      translate(0px) !important;
+        transform:         translate(0px) !important;
+      }
+
+      /*
+       * Based on Google's Material Design breakpoints.
+       */
+
+      /* mobile   e.g. nexus5/iphone6 */
+      @media all and (min-width: 0px) and (max-width: 600px) (orientation: portrait) {
+        BODY {
+          background-color: orange;
+        }
+      }
+
+      /* mobile landscape*/
+      @media all and (min-width: 0px) and (max-width: 960px) and (orientation: landscape) {
+        BODY {
+          background-color: black;
+        }
+
+        #game-canvas {
+          width: 400px;
+          height: 300px;
+        }
+
+        #content-title {
+          display: none;
+        }
+
+        #menu {
+          left: -320px;
+          width: 300px;
+          overflow-y: scroll;
+        }
+
+        .large-round-bttn {
+          box-shadow: none;
+        }
+
+        #hamburgler {
+          display: block;
+          background: no-repeat center/150% url("./snes9x/icons/burger3.png");
+          border: none;
+        }
+
+        #canvas-wrapper {
+          position: initial;
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: -2px;
+          background-color: white;
+          width: 410px;
+          height: 310px;
+        }
+
+        #main-content {
+          position: initial;
+          width: 100%;
+          height: 100%;
+          margin-top: -2px;
+        }
+
+        #load-file {
+          top: auto;
+          left: auto;
+          background-color: orange;
+          right: 30px;
+          bottom: 25px;
+        }
+      }
+
+      /* tablet   e.g. ipad/ipad pro */
+      @media all and (min-width: 601px) and (max-width: 1000px) and (orientation : portrait) {
+        #menu {
+          left: -320px;
+          width: 300px;
+        }
+
+        #hamburgler {
+          display: block;
+        }
+
+        #game-canvas {
+          width: 600px;
+          height: 450px;
+        }
+
+        #main-content {
+          position: initial;
+          width: 90%;
+          height: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #canvas-wrapper {
+          position: initial;
+          width: 620px;
+          height: 470px;
+        }
+
+        #content-title {
+          border: none;
+          margin-left: 50px;
+        }
+
+        #load-file {
+          top: auto;
+          left: auto;
+          right: 30%;
+          bottom: 30%;
+        }
+      }
+
+      /* tablet landscape */
+      @media all and (min-width: 961px) and (max-width: 1281px) and (orientation: landscape) {
+        #menu {
+          left: -320px;
+          width: 300px;
+        }
+
+        #hamburgler {
+          display: block;
+        }
+
+        #game-canvas {
+          width: 600px;
+          height: 450px;
+        }
+
+        #main-content {
+          position: initial;
+          width: 90%;
+          height: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #content-title {
+          width: 90%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #canvas-wrapper {
+          position: initial;
+          margin-left: auto;
+          margin-right: auto;
+          width: 620px;
+          height: 470px;
+        }
+
+        #load-file {
+          top: auto;
+          left: auto;
+          right: 3%;
+          bottom: 5%;
+        }
+      }
+    </style>
+  <body>
+    <div id="modal-backdrop"></div>
+    <div id="hamburgler"></div>
+    <div id="menu">
+      <div class="row">
+        <label>Frameskip</label>
+        <div class="small-round-bttn linear orange right-align" id="fskip-plus">
+          <span>+</span>
+        </div>
+        <div class="small-round-bttn linear orange right-align" id="fskip-minus">
+          <span>&#8722;</span>
+        </div>
+        <div class="small-round-bttn linear right-align" style="box-shadow:none;">
+          <span id="fskip-text" style="color:#CCC;">0</span>
+        </div>
+      </div>
+      <div class="row">
+        <label>Transparency</label>
+        <label class="switch-toggle right-align">
+          <input type="checkbox" id="transparency-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <label>Display FPS</label>
+        <label class="switch-toggle right-align">
+          <input type="checkbox" id="fps-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <label>Fullscreen</label>
+        <label class="switch-toggle right-align">
+          <input type="checkbox" id="fullscreen-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <label>Console Output</label>
+        <label class="switch-toggle right-align">
+          <input type="checkbox" id="output-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <span id="control-mappings" class="not-implemented">Controls</span>
+      </div>
+    </div>
+    <div id="main-content">
+      <!-- <div id="content-title">
+        <span style="margin-left: 5%;">SNES9x Compiled via Emscripten</span>
+      </div> -->
+      <div id="content-title"><span style="margin-left: 5%;">Foobar Foobar</span></div>
+      <div id="canvas-wrapper">
+        <canvas
+          id="game-canvas"
+          oncontextmenu="event.preventDefault()">
+        </canvas>
+      </div>
+      <div class="large-round-bttn" id="load-file">+</div>
+      <textarea id="console-output"></textarea>
+    </div>
+    <script>
+      var modal = document.getElementById('modal-backdrop');
+      var menu = document.getElementById('menu');
+
+      modal.addEventListener('click', function() {
+        menu.classList.remove('menu-animation-in');
+        menu.classList.add('menu-animation-out');
+        modal.style.display = 'none';
+      });
+
+      document.getElementById('output-toggle').addEventListener('click', (function() {
+        var out = document.getElementById('console-output');
+        return function() {
+          out.style.opacity = '' + Number(!+out.style.opacity);
+        };
+      })());
+
+      document.getElementById('hamburgler').addEventListener('click', function() {
+        menu.classList.remove('menu-animation-out');
+        menu.classList.add('menu-animation-in');
+        modal.style.display = 'block';
+      });
+    </script>
+  </body>
+</html>
