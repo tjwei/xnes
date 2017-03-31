@@ -416,11 +416,11 @@ const char * S9xChooseFilename (bool8 read_only)
 
 	S9xSetSoundMute(TRUE);
 	filename = S9xSelectFilename(s, S9xGetDirectory(SNAPSHOT_DIR), "frz", title);
-#ifdef SOUND    
+#ifdef SOUND
 	S9xSetSoundMute(FALSE);
 #else
     S9xSetSoundMute(TRUE);
-#endif 
+#endif
 
 	return (filename);
 }
@@ -456,6 +456,7 @@ bool8 S9xContinueUpdate (int width, int height)
 
 void S9xAutoSaveSRAM (void)
 {
+		Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
     printf("auto save sram\n");
 }
 void S9xSyncSpeed (void)
@@ -464,7 +465,7 @@ void S9xSyncSpeed (void)
 	IPPU.RenderThisFrame = (++IPPU.SkippedFrames >= Settings.SkipFrames) ? TRUE : FALSE;
         if (IPPU.RenderThisFrame)
 		IPPU.SkippedFrames = 0;
-     
+
 #else
 	static struct timeval	next1 = { 0, 0 };
 	struct timeval			now;
@@ -481,11 +482,11 @@ void S9xSyncSpeed (void)
 	// If we're on AUTO_FRAMERATE, we'll display frames always only if there's excess time.
 	// Otherwise we'll display the defined amount of frames.
 	unsigned	limit = (Settings.SkipFrames == AUTO_FRAMERATE) ? (timercmp(&next1, &now, <) ? 10 : 1) : Settings.SkipFrames;
-    
+
 	IPPU.RenderThisFrame = (++IPPU.SkippedFrames >= limit) ? TRUE : FALSE;
     if (IPPU.RenderThisFrame)
 		IPPU.SkippedFrames = 0;
-     
+
 	else
 	{
 		// If we were behind the schedule, check how much it is.
@@ -506,7 +507,7 @@ void S9xSyncSpeed (void)
 
 	while (timercmp(&next1, &now, >))
 	{
-            
+
 		// If we're ahead of time, sleep a while.
 		unsigned	timeleft = (next1.tv_sec - now.tv_sec) * 1000000 + next1.tv_usec - now.tv_usec;
 		usleep(timeleft);
@@ -536,8 +537,10 @@ void S9xExit (void)
 	if (Settings.NetPlay)
 		S9xNPDisconnect();
 #endif
+
+  Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
+
 #ifdef FANCY
-	Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
 	S9xSaveCheatFile(S9xGetFilename(".cht", CHEAT_DIR));
 	S9xResetSaveTimer(FALSE);
 #endif
@@ -563,11 +566,11 @@ void S9xParseArg (char **argv, int &i, int argc){
 
 #ifdef HTML
 extern "C" void toggle_display_framerate() __attribute__((used));
-extern "C" void run() __attribute__((used));
+extern "C" void run(char*) __attribute__((used));
 extern "C" int set_frameskip(int) __attribute__((used));
 int set_frameskip(int n){
 Settings.SkipFrames = n;
-return n;    
+return n;
 }
 void toggle_display_framerate(){
 
@@ -575,13 +578,12 @@ void toggle_display_framerate(){
 }
 void mainloop(){
     S9xProcessEvents(FALSE);
-    S9xMainLoop();    
+    S9xMainLoop();
 }
 void reboot_emulator(char *filename){
-    	uint32	saved_flags = CPU.Flags;
+  uint32 saved_flags = CPU.Flags;
 	bool8	loaded = FALSE;
-	
-		loaded = Memory.LoadROM(filename);
+  loaded = Memory.LoadROM(filename);
 
 	if (!loaded)
 	{
@@ -591,6 +593,17 @@ void reboot_emulator(char *filename){
 
 	NSRTControllerSetup();
 
+	printf("Attempting to load SRAM %s.\n", S9xGetFilename(".srm", SRAM_DIR));
+	bool8 sramloaded = Memory.LoadSRAM(S9xGetFilename(".srm", SRAM_DIR));
+	if (sramloaded)
+	{
+		printf("Load successful.\n");
+	}
+	else
+	{
+		printf("Load failed.\n");
+	}
+
 	CPU.Flags = saved_flags;
 	Settings.StopEmulation = FALSE;
 
@@ -599,19 +612,19 @@ void reboot_emulator(char *filename){
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
 
     S9xSetTitle(String);
-#ifdef SOUND    
+#ifdef SOUND
 	S9xSetSoundMute(FALSE);
 #else
     S9xSetSoundMute(TRUE);
-#endif    
+#endif
 }
 extern "C" void* set_transparency(int i) __attribute__((used));
 void* set_transparency(int i){
     Settings.Transparency=i;
     return (void *)&Settings;
 }
-void run(){
-    reboot_emulator("_.smc");
+void run(char *filename){
+    reboot_emulator(filename);
     #ifdef SOUND
     printf("S9xSetSoundMute(FALSE)\n");
     S9xSetSoundMute(FALSE);
@@ -619,7 +632,7 @@ void run(){
     printf("S9xSetSoundMute(TRUE)\n");
     S9xSetSoundMute(TRUE);
     #endif
-    printf("start main loop");
+    printf("start main loop\n");
     emscripten_set_main_loop(mainloop, 0, 0);
 }
 
@@ -628,12 +641,27 @@ void run(){
 
 
 int main (int argc, char **argv)
-{	
+{
     int iters;
 	printf("\n\nSnes9x " VERSION " for unix/SDL\n");
 
 	snprintf(default_dir, PATH_MAX + 1, "%s%s%s", getenv("HOME"), SLASH_STR, ".snes9x");
 	s9x_base_dir = default_dir;
+
+	EM_ASM(
+		console.log('Syncing file system...');
+		FS.mkdir('/home/web_user/.snes9x');
+		FS.mkdir('/home/web_user/.snes9x/sram');
+		FS.mount(IDBFS, {}, '/home/web_user/.snes9x/sram');
+		FS.syncfs(true, function(err) {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log('File system synced.');
+				window.initSNES();
+			}
+		});
+	);
 
 	ZeroMemory(&Settings, sizeof(Settings));
 	Settings.MouseMaster = TRUE;
@@ -645,7 +673,7 @@ int main (int argc, char **argv)
 	Settings.SixteenBitSound = TRUE;
 	Settings.Stereo = TRUE;
 	Settings.SupportHiRes = TRUE;
-	Settings.Transparency = TRUE;    
+	Settings.Transparency = TRUE;
 	Settings.AutoDisplayMessages = FALSE;
 	Settings.InitialInfoStringTimeout = 120;
 	Settings.HDMATimingHack = 100;
@@ -653,25 +681,25 @@ int main (int argc, char **argv)
 	Settings.StopEmulation = TRUE;
 	Settings.WrongMovieStateProtection = TRUE;
 	Settings.DumpStreamsMaxFrames = -1;
-        Settings.DisplayFrameRate = TRUE;
-        Settings.AutoDisplayMessages = TRUE;
+  Settings.DisplayFrameRate = TRUE;
+  Settings.AutoDisplayMessages = TRUE;
 	Settings.StretchScreenshots = 1;
 	Settings.SnapshotScreenshots = TRUE;
 	Settings.SkipFrames = 0;
 	Settings.TurboSkipFrames = 15;
 	Settings.CartAName[0] = 0;
 	Settings.CartBName[0] = 0;
-    Settings.NoPatch= TRUE;
-    Settings.SoundSync                  =  FALSE;
-#ifdef SOUND    
-	Settings.Mute                       =  FALSE;
-    Settings.SoundPlaybackRate = 22100;
+  Settings.NoPatch= TRUE;
+  Settings.SoundSync =  FALSE;
+#ifdef SOUND
+	Settings.Mute = FALSE;
+  Settings.SoundPlaybackRate = 22100;
 	Settings.SoundInputRate = 22100;
 #else
-    Settings.Mute                       =  TRUE;
-    Settings.SoundPlaybackRate = 16000;
+  Settings.Mute = TRUE;
+  Settings.SoundPlaybackRate = 16000;
 	Settings.SoundInputRate = 16000;
-#endif     	
+#endif
 	CPU.Flags = 0;    ;
 	if (!Memory.Init() || !S9xInitAPU())
 	{
@@ -692,7 +720,7 @@ int main (int argc, char **argv)
 
 
 	// domaemon: setting the title on the window bar
-	
+
 #ifdef HTML
        emscripten_exit_with_live_runtime();
 #else
@@ -712,6 +740,17 @@ int main (int argc, char **argv)
 
 	NSRTControllerSetup();
 
+	printf("Attempting to load SRAM %s.\n", S9xGetFilename(".srm", SRAM_DIR));
+	bool8 sramloaded = Memory.LoadSRAM(S9xGetFilename(".srm", SRAM_DIR));
+	if (sramloaded)
+	{
+		printf("Load successful.\n");
+	}
+	else
+	{
+		printf("Load failed.\n");
+	}
+
 	CPU.Flags = saved_flags;
 	Settings.StopEmulation = FALSE;
 
@@ -720,20 +759,20 @@ int main (int argc, char **argv)
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
 
     S9xSetTitle(String);
-#ifdef SOUND    
+#ifdef SOUND
 	S9xSetSoundMute(FALSE);
 #else
     S9xSetSoundMute(TRUE);
-#endif    
+#endif
     printf("before start\n");
-    printf("registers.pcw=%x\n", Registers.PCw);    
+    printf("registers.pcw=%x\n", Registers.PCw);
 	for(iters=0;iters<5000;iters++)
 	{
 
         S9xMainLoop();
-        S9xProcessEvents(FALSE);        
+        S9xProcessEvents(FALSE);
 	}
+
 #endif
 	return (0);
 }
-

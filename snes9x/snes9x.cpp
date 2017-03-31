@@ -745,7 +745,7 @@ char * S9xParseArgs (char **argv, int argc)
 			else
 
 			// PATCH/CHEAT OPTIONS
-#ifdef FANCY  
+#ifdef FANCY
 			if (!strcasecmp(argv[i], "-nopatch"))
 				Settings.NoPatch = TRUE;
 			else
@@ -768,7 +768,7 @@ char * S9xParseArgs (char **argv, int argc)
 				else
 					S9xUsage();
 			}
-          
+
 			else
 			if (!strcasecmp(argv[i], "-actionreplay"))
 			{
@@ -838,7 +838,7 @@ char * S9xParseArgs (char **argv, int argc)
 		#endif
 
 			// HACKING OR DEBUGGING OPTIONS
-		
+
 		#ifdef DEBUGGER
 			if (!strcasecmp(argv[i], "-debug"))
 				CPU.Flags |= DEBUG_MODE_FLAG;

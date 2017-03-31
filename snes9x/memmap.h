@@ -360,7 +360,8 @@ struct SMulti
 extern CMemory	Memory;
 extern SMulti	Multi;
 
-void S9xAutoSaveSRAM (void);
+// void S9xAutoSaveSRAM (void);
+extern "C" void S9xAutoSaveSRAM (void);
 bool8 LoadZip(const char *, int32 *, int32 *, uint8 *);
 
 enum s9xwrap_t
