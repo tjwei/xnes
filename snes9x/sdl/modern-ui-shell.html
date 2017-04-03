@@ -91,7 +91,7 @@
         height: 620px;
         margin-top: 20px;
         margin-left: 35px;
-        box-shadow: 0 4px 2px -2px #EEE;
+        box-shadow: 0 4px 2px -2px #999;
         background-color: white;
       }
 
@@ -128,12 +128,17 @@
       }
 
       #console-output {
-        width: 816px;
+        width: 800px;
         height: 15%;
         min-height: 100px;
         margin-top: 10px;
         opacity: 0;
         margin-left: 35px;
+        padding-top: 1px;
+        padding-left: 10px;
+        padding-right: 10px;
+        overflow-y: scroll;
+        box-shadow: 0 4px 2px -2px #999;
       }
 
       #hamburgler {
@@ -302,6 +307,38 @@
         -ms-transform:     translate(0px) !important;
         -o-transform:      translate(0px) !important;
         transform:         translate(0px) !important;
+      }
+
+      .spinner {
+        height: 50px;
+        width: 50px;
+        margin: 0px auto;
+        -webkit-animation: rotation .8s linear infinite;
+        -moz-animation: rotation .8s linear infinite;
+        -o-animation: rotation .8s linear infinite;
+        animation: rotation 0.8s linear infinite;
+        border-left: 10px solid rgb(0,150,240);
+        border-right: 10px solid rgb(0,150,240);
+        border-bottom: 10px solid rgb(0,150,240);
+        border-top: 10px solid rgb(100,0,200);
+        border-radius: 100%;
+        background-color: rgb(200,100,250);
+      }
+      @-webkit-keyframes rotation {
+        from {-webkit-transform: rotate(0deg);}
+        to {-webkit-transform: rotate(360deg);}
+      }
+      @-moz-keyframes rotation {
+        from {-moz-transform: rotate(0deg);}
+        to {-moz-transform: rotate(360deg);}
+      }
+      @-o-keyframes rotation {
+        from {-o-transform: rotate(0deg);}
+        to {-o-transform: rotate(360deg);}
+      }
+      @keyframes rotation {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
       }
 
       /*
@@ -529,6 +566,13 @@
         </div>
       </div>
       <div class="row">
+        <label>Fullscreen</label>
+        <label class="switch-toggle right-align vert-center-bttn">
+          <input type="checkbox" id="fullscreen-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
         <label>Transparency</label>
         <label class="switch-toggle right-align vert-center-bttn">
           <input type="checkbox" id="transparency-toggle">
@@ -539,13 +583,6 @@
         <label>Display FPS</label>
         <label class="switch-toggle right-align vert-center-bttn">
           <input type="checkbox" id="fps-toggle">
-          <div class="slider-toggle round"></div>
-        </label>
-      </div>
-      <div class="row">
-        <label>Fullscreen</label>
-        <label class="switch-toggle right-align vert-center-bttn">
-          <input type="checkbox" id="fullscreen-toggle">
           <div class="slider-toggle round"></div>
         </label>
       </div>
@@ -567,21 +604,66 @@
       <div id="content-title">
         <span style="margin-left: 5%;"><span style="color:blue;">S</span><span style="color:red;">n</span><span style="color:green;">e</span><span style="color:yellow;">s</span><span style="color:#666;">9x</span> <span style="text-shadow:none;color:#079af1;">Super Nintendo Emulator</span></span>
       </div>
-      <!-- <div id="content-title"><span style="margin-left: 5%;">Foobar Foobar</span></div> -->
       <div id="canvas-wrapper">
-        <canvas
-          id="game-canvas"
-          oncontextmenu="event.preventDefault()">
-        </canvas>
+        <canvas id="game-canvas" oncontextmenu="event.preventDefault()"></canvas>
       </div>
+      <label for="file-selector" class="large-round-bttn bttn-color" id="load-file">+</label>
       <input type="file" id="file-selector">
-      <div class="large-round-bttn bttn-color" id="load-file">+</div>
       <textarea id="console-output"></textarea>
     </div>
     <script>
+      // test for canvas and webgl support
+      (function() {
+        var cnv, ctx, msg = 'Your browser doesn\'t seem to support SNES9x.' +
+           ' Please use a more modern browser like Google Chrome' +
+           ' or Mozilla Firefox.';
+
+        try {
+          cnv = document.createElement('canvas');
+        } catch (e) {
+          // no-op
+        }
+
+        if (!cnv) {
+          alert(msg);
+          return;
+        }
+
+        try {
+          ctx = cnv.getContext('webgl');
+        } catch (e) {
+          // no-op
+        }
+
+        if (!ctx) {
+          try {
+            ctx = cnv.getContext('experimental-webgl');
+          } catch (e) {
+            // no-op
+          }
+        }
+
+        if (!ctx) {
+          alert(msg);
+        }
+
+        return;
+      })();
+
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
+
+      var hide = function(el) {
+        el.style.display = 'none';
+        return el;
+      };
+
+      var show = function(el) {
+        el.style.display = 'block';
+        return el;
+      };
+
       window.Module = {
         preRun: [],
         postRun: [],
@@ -657,15 +739,16 @@
         var menu = document.getElementById('menu');
         var aboutDiv = document.getElementById('about-div');
         var hamburger = document.getElementById('hamburgler');
-        var hide = function(el) {
-          el.style.display = 'none';
-          return el;
-        };
-
-        var show = function(el) {
-          el.style.display = 'block';
-          return el;
-        };
+        var fileChooser = document.getElementById('file-selector');
+        var frameskipInc = document.getElementById('fskip-plus');
+        var frameskipDec = document.getElementById('fskip-minus');
+        var frameskipSpan = document.getElementById('fskip-text');
+        var transToggle = document.getElementById('transparency-toggle');
+        var fpsToggle = document.getElementById('fps-toggle');
+        var fullscreen = document.getElementById('fullscreen-toggle');
+        var outputToggle = document.getElementById('output-toggle');
+        var cout_print = Module.print;
+        var filename = "";
 
         var hideMenu = function() {
           if (hamburger && window.getComputedStyle(hamburger).display !== 'none') {
@@ -682,37 +765,6 @@
             show(modal);
           }
         };
-
-        modal.addEventListener('click', hideMenu);
-        hamburger.addEventListener('click', showMenu);
-
-        document.getElementById('output-toggle').addEventListener('click', (function() {
-          var out = document.getElementById('console-output');
-          return function() {
-            out.style.opacity = '' + Number(!+out.style.opacity);
-          };
-        })());
-
-        document.getElementById('about').addEventListener('click', function() {
-          hideMenu();
-          show(modal);
-          show(aboutDiv);
-        });
-
-        document.getElementById('about-closer').addEventListener('click', function(evt) {
-          hide(modal);
-          hide(aboutDiv);
-        });
-
-        var fileChooser = document.getElementById('file-selector');
-        var frameskipInc = document.getElementById('fskip-plus');
-        var frameskipDec = document.getElementById('fskip-minus');
-        var frameskipSpan = document.getElementById('fskip-text');
-        var transToggle = document.getElementById('transparency-toggle');
-        var fpsToggle = document.getElementById('fps-toggle');
-        var fullscreen = document.getElementById('fullscreen-toggle');
-        var cout_print = Module.print;
-        var filename = "";
 
         var frameskipAdjust = (function() {
           var frameskip = 0;
@@ -746,10 +798,13 @@
         })();
 
         var goFullScreen = function() {
-          var pointerlock = document.getElementById('pointer-lock').checked;
-          var resize = document.getElementById('resize').checked;
+          // var pointerlock = document.getElementById('pointer-lock').checked;
+          // var resize = document.getElementById('resize').checked;
           // double-checked, this does expect js boolean values
-          Module.requestFullScreen(pointerlock, resize);
+          // Module.requestFullScreen(pointerlock, resize);
+
+          // double-checked, this does expect js boolean values
+          Module.requestFullScreen(true, true);
         };
 
         var snesReadFile = function(evt) {
@@ -763,6 +818,7 @@
             } else {
               count_print(e.loaded + "bytes");
             }
+
           };
           reader.onload = function(e) {
             cout_print(f.name + " loaded");
@@ -783,40 +839,44 @@
           };
         })();
 
+        // make sure we sync state before tab closes
+        window.addEventListener('beforeunload', Module._S9xAutoSaveSRAM);
         fpsToggle.addEventListener('click', Module._toggle_display_framerate);
-        document.getElementById('load-file').addEventListener('click', function() {
-          debugger;
-          fileChooser.dispatchEvent(new Event('click'));
-        });
-
+        modal.addEventListener('click', hideMenu);
+        hamburger.addEventListener('click', showMenu);
         fileChooser.addEventListener('change', snesReadFile);
         frameskipInc.addEventListener('click', frameskipAdjust(1));
         frameskipDec.addEventListener('click', frameskipAdjust(-1));
         transToggle.addEventListener('click', toggleTransparency);
         fullscreen.addEventListener('click', goFullScreen);
-        // make sure we sync state before tab closes
-        window.addEventListener('beforeunload', Module._S9xAutoSaveSRAM);
+
+        outputToggle.addEventListener('click', (function() {
+          var out = document.getElementById('console-output');
+          return function() {
+            out.style.opacity = '' + Number(!+out.style.opacity);
+          };
+        })());
+
+        document.getElementById('about').addEventListener('click', function() {
+          hideMenu();
+          show(modal);
+          show(aboutDiv);
+        });
+
+        document.getElementById('about-closer').addEventListener('click', function(evt) {
+          hide(modal);
+          hide(aboutDiv);
+        });
+
+        if (window.location.href.match(/[&?]debug=true/i)) {
+          fpsToggle.dispatchEvent(new Event('click'), {bubbles: true});
+          outputToggle.dispatchEvent(new Event('click'), {bubbles: true});
+          fpsToggle.checked = true;
+          outputToggle.checked = true;
+        }
+
       };
     </script>
-    <script>
-
-          (function() {
-            var memoryInitializer = 'snes9x.html.mem';
-            if (typeof Module['locateFile'] === 'function') {
-              memoryInitializer = Module['locateFile'](memoryInitializer);
-            } else if (Module['memoryInitializerPrefixURL']) {
-              memoryInitializer = Module['memoryInitializerPrefixURL'] + memoryInitializer;
-            }
-            var meminitXHR = Module['memoryInitializerRequest'] = new XMLHttpRequest();
-            meminitXHR.open('GET', memoryInitializer, true);
-            meminitXHR.responseType = 'arraybuffer';
-            meminitXHR.send(null);
-          })();
-
-          var script = document.createElement('script');
-          script.src = "snes9x.js";
-          document.body.appendChild(script);
-
-</script>
+    {{{ SCRIPT }}}
   </body>
 </html>
