@@ -794,7 +794,7 @@
           case 64: // @
             return keycode;
 
-          // Alphabet. JavaScript uses the upper case ascii codes, sdl uses the lower. So we add.
+          // Alphabet. JavaScript uses the upper case ascii codes, SDL uses the lower. So we add.
           case 65:
           case 66:
           case 67:
@@ -823,7 +823,8 @@
           case 90:
             return keycode + 32;
 
-          // AFAIK META not mapped in current emSDL, would be difficult to use through browser anyway
+          // AFAIK META not mapped in current emSDL, difficult to use through browser anyway on
+          // most systems
           case 91: return 0; // LMETA
           case 92: return 0; // RMETA/Menu
           case 93: return 0; // RMETA
@@ -1132,35 +1133,53 @@
           }
         };
 
-        var setSDLKeys = function(keyarr) {
-          Module._S9xInitInputDevices(
-            keyarr[0],
-            keyarr[1],
-            keyarr[2],
-            keyarr[3],
-            keyarr[4],
-            keyarr[5],
-            keyarr[6],
-            keyarr[7],
-            keyarr[8],
-            keyarr[9],
-            keyarr[10],
-            keyarr[11],
-            keyarr[12]
-          );
+        var setSDLKeys = (function() {
+          var init = Module.cwrap('S9xInitInputDevices', null, [
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number'
+          ]);
+          return function(keyarr) {
+            init.apply(Module, keyarr.slice(0,11).map(getSDLKey));
+            return keyarr;
+          };
+        })();
 
+        var readKeyFile = (function() {
+          // mapping from original port by tjwei
+          var defaultKeyArray = [39, 37, 40, 38, 32, 13, 68, 67, 83, 88, 65, 90];
+          return function() {
+            var keyfile = window.localStorage.getItem('snes9x_keymap.json');
+            if (keyfile) {
+              cout_print('Keymap loaded.');
+              return JSON.parse(keyfile);
+            } else {
+              cout_print("No user keymap, writing default...");
+              writeKeyFile(defaultKeyArray);
+              return defaultKeyArray;
+            }
+          }
+        })();
+
+        var writeKeyFile = function(keyarr) {
+          cout_print("Saving keymap...");
+          window.localStorage.setItem('snes9x_keymap.json', JSON.stringify(keyarr));
           return keyarr;
         };
 
-        // Nil -> [JSKeycodes]
-        var readKeyFile = function() {};
-
-        // [JSKeycodes] -> [JSKeycodes]
-        var writeKeyFile = function(keyarr) {};
-
         var writeInputs = function(keyarr) {
           [].slice.call(mapDiv.querySelectorAll('input')).forEach(function(inp, i) {
-            inp.value = '' + keyarr[i];
+            inp.setAttribute('data-keycode', keyarr[i]);
+            inp.value = '' + KeyCodeToPrintable(keyarr[i]);
           });
 
           return keyarr;
@@ -1168,7 +1187,7 @@
 
         var readInputs = function() {
           return [].slice.call(mapDiv.querySelectorAll('input')).map(function(inp) {
-            return +input.getAttribute('data-keycode');
+            return +inp.getAttribute('data-keycode');
           });
         };
 
@@ -1245,6 +1264,9 @@
           };
         })();
 
+        // initialize key mappings
+        writeInputs(setSDLKeys(readKeyFile()));
+
         // make sure we sync state before tab closes
         window.addEventListener('beforeunload', Module._S9xAutoSaveSRAM);
         fpsToggle.addEventListener('click', Module._toggle_display_framerate);
@@ -1274,17 +1296,9 @@
         });
 
         document.getElementById('save-keymap').addEventListener('click', function() {
-          var keymap= [].slice.call(mapDiv.querySelectorAll('input')).reduce(function(acc, el) {
-            if (acc) {
-              // var k = el.parentElement.previousElementSibling.textContent;
-              var v = el.getAttribute('data-keycode');
-              if (!v) return null;
-              acc.push(+v);
-            }
-            return acc;
-          }, []);
-
-          console.log(keymap);
+          writeKeyFile(setSDLKeys(readInputs()));
+          hide(modal);
+          hide(mapDiv);
         });
 
         document.getElementById('about').addEventListener('click', function() {

@@ -36,6 +36,7 @@
 #include "snes9x.h"
 #include "port.h"
 #include "controls.h"
+#include "display.h"
 
 // domaemon: FIXME, just collecting the essentials.
 // domaemon: *) here we define the keymapping.
@@ -49,18 +50,6 @@ void S9xParseInputConfig (ConfigFile &conf, int pass)
 // {
 // 	S9xUnmapAllControls();
 // #ifdef USE_SDL
-//     printf("SDLK_RIGHT is %d\n", SDLK_RIGHT);
-//     printf("SDLK_LEFT is %d\n", SDLK_LEFT);
-//     printf("SDLK_DOWN is %d\n", SDLK_DOWN);
-//     printf("SDLK_UP is %d\n", SDLK_UP);
-//     printf("SDLK_RETURN is %d\n", SDLK_RETURN);
-//     printf("SDLK_SPACE is %d\n", SDLK_SPACE);
-//     printf("SDLK_d is %d\n", SDLK_d);
-//     printf("SDLK_c is %d\n", SDLK_c);
-//     printf("SDLK_s is %d\n", SDLK_s);
-//     printf("SDLK_x is %d\n", SDLK_x);
-//     printf("SDLK_a is %d\n", SDLK_a);
-//     printf("SDLK_z is %d\n", SDLK_z);
 //     S9xMapButton(SDLK_RIGHT, S9xGetCommandT("Joypad1 Right"), false);
 //     S9xMapButton(SDLK_LEFT, S9xGetCommandT("Joypad1 Left"), false);
 //     S9xMapButton(SDLK_DOWN, S9xGetCommandT("Joypad1 Down"), false);
