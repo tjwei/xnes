@@ -325,6 +325,7 @@ static int32						curcontrollers[2] = { NONE,    NONE };
 static int32						newcontrollers[2] = { JOYPAD0, NONE };
 static char							buf[256];
 
+#ifdef FANCY
 static const char	*color_names[32] =
 {
 	"Trans",
@@ -360,6 +361,7 @@ static const char	*color_names[32] =
 	"tMagicPink",
 	"tPurple"
 };
+#endif
 
 static const char	*speed_names[4] =
 {
@@ -3179,7 +3181,9 @@ void S9xDoAutoJoypad (void)
 
 void S9xControlEOF (void)
 {
-	struct crosshair	*c;
+	#ifdef FANCY
+	  struct crosshair	*c;
+	#endif
 	int					i, j;
 
 	PPU.GunVLatch = 1000; // i.e., never latch
