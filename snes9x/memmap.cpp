@@ -3938,7 +3938,10 @@ static bool8 ReadBPSPatch (Reader *r, long, int32 &rom_size)
 
 		switch((int)mode) {
 			case SourceRead:
-				while(length--) patched_rom[outputOffset++] = Memory.ROM[outputOffset];
+				while(length--) {
+					patched_rom[outputOffset] = Memory.ROM[outputOffset + 1];
+					outputOffset++;
+				}
 				break;
 			case TargetRead:
 				while(length--) patched_rom[outputOffset++] = data[addr++];
