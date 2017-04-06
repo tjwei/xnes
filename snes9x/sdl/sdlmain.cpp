@@ -606,7 +606,7 @@ void reboot_emulator(char *filename){
 	CPU.Flags = saved_flags;
 	Settings.StopEmulation = FALSE;
 
-	// S9xInitInputDevices(1103, 1104, 1105, 1106, 13, 32, 120, 122, 114, 97, 113, 119);
+	S9xInitInputDevices(1103, 1104, 1105, 1106, 13, 32, 120, 122, 114, 97, 113, 119);
 	S9xInitDisplay(NULL, NULL);
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
 
