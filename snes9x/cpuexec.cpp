@@ -193,7 +193,8 @@ static inline void S9xReschedule (void);
 
 void S9xMainLoop (void)
 {
-    static int loop_times=0;
+    // debugging variable?
+    // static int loop_times=0;
     int loops2=0;
     //printf("Enter S9xMainLoop %d %x\n", loop_times, Registers.PCw);
 	for (;;)
@@ -218,7 +219,7 @@ void S9xMainLoop (void)
 		}
 
 		if (CPU.IRQTransition || CPU.IRQExternal)
-		{   
+		{
             //printf("case 2\n");
 			if (CPU.IRQPending)
 				CPU.IRQPending--;
@@ -274,12 +275,12 @@ void S9xMainLoop (void)
 		register uint8				Op;
 		register Opcode				*Opcodes;
 
-		if (CPU.PCBase)            
-		{   
+		if (CPU.PCBase)
+		{
 			Op = CPU.PCBase[Registers.PCw];
-            
+
 			CPU.PrevCycles = CPU.Cycles;
-			CPU.Cycles += CPU.MemSpeed;            
+			CPU.Cycles += CPU.MemSpeed;
 			S9xCheckInterrupts();
 			Opcodes = ICPU.S9xOpcodes;
             //printf("case 3 %x %x %d %d\n", Registers.PCw, Op, CPU.PrevCycles, CPU.Cycles);
@@ -293,7 +294,7 @@ void S9xMainLoop (void)
 		}
 
 		if ((Registers.PCw & MEMMAP_MASK) + ICPU.S9xOpLengths[Op] >= MEMMAP_BLOCK_SIZE)
-		{            
+		{
 			uint8	*oldPCBase = CPU.PCBase;
             //printf("case 5\n");
 
