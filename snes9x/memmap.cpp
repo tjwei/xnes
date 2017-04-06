@@ -948,7 +948,8 @@ static bool8 is_SameGame_Add_On (uint8 *, uint32);
 static bool8 is_GNEXT_BIOS (uint8 *, uint32);
 static bool8 is_GNEXT_Add_On (uint8 *, uint32);
 static uint32 caCRC32 (uint8 *, uint32, uint32 crc32 = 0xffffffff);
-static uint32 ReadUPSPointer (const uint8 *, unsigned &, unsigned);
+// unused? not externed or used anywhere in file...
+// static uint32 ReadUPSPointer (const uint8 *, unsigned &, unsigned);
 static bool8 ReadUPSPatch (Reader *, long, int32 &);
 static long ReadInt (Reader *, unsigned);
 static bool8 ReadIPSPatch (Reader *, long, int32 &);
