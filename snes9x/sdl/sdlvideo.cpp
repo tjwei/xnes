@@ -169,9 +169,9 @@ void S9xInitDisplay (int argc, char **argv)
 	{
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
 	}
-  
+
 	atexit(SDL_Quit);
-	
+
 	/*
 	 * domaemon
 	 *
@@ -241,7 +241,7 @@ static void SetupImage (void)
 void BlitRGB565toRGB32(uint16 *srcPtr, int srcRowBytes, uint32 *dstPtr, int dstRowBytes, int width, int height)
 {
     int x;
-    unsigned int r,g,b;	
+    unsigned int r,g,b;
 
 	for (; height; height--)
 	{
@@ -252,11 +252,11 @@ void BlitRGB565toRGB32(uint16 *srcPtr, int srcRowBytes, uint32 *dstPtr, int dstR
             b=(srcPtr[x]&0x1f)<<3;
 #ifdef HTML
             dstPtr[x]=(b<<16)|(g<<8)|r;
-#else            
+#else
             dstPtr[x]=(r<<16)|(g<<8)|b;
 #endif
         }
-		
+
 		srcPtr += (srcRowBytes/2);
 		dstPtr += (dstRowBytes/4);
 	}
@@ -265,16 +265,17 @@ void BlitRGB565toRGB32(uint16 *srcPtr, int srcRowBytes, uint32 *dstPtr, int dstR
 void S9xPutImage (int width, int height)
 {
 
-	Blitter		blitFn = NULL;
-    static int frames=0;
+	// Blitter		blitFn = NULL;
+  //   static int frames=0;
 #ifdef USE_SDL
     SDL_LockSurface(GUI.sdl_screen);
 	// domaemon: this is place where the rendering buffer size should be changed?
-	BlitRGB565toRGB32((uint16 *) GFX.Screen, GFX.Pitch, (uint32 *) GUI.blit_screen, GUI.blit_screen_pitch, width, height);  
-    SDL_UnlockSurface(GUI.sdl_screen);  
+	BlitRGB565toRGB32((uint16 *) GFX.Screen, GFX.Pitch, (uint32 *) GUI.blit_screen, GUI.blit_screen_pitch, width, height);
+    SDL_UnlockSurface(GUI.sdl_screen);
 	SDL_Flip(GUI.sdl_screen);
 #endif
 #ifdef ASCII
+    static int frames=0;
     drawansi (width, height, GFX.Screen, 16,GFX.Pitch);
     printf("\n%d\n", frames++);
     fflush(stdout);

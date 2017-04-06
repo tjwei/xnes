@@ -36,31 +36,50 @@
 #include "snes9x.h"
 #include "port.h"
 #include "controls.h"
+#include "display.h"
 
 // domaemon: FIXME, just collecting the essentials.
 // domaemon: *) here we define the keymapping.
 void S9xParseInputConfig (ConfigFile &conf, int pass)
 {
-	
+
 	return;
 }
 
-void S9xInitInputDevices (void)
+// void S9xInitInputDevices (void)
+// {
+// 	S9xUnmapAllControls();
+// #ifdef USE_SDL
+//     S9xMapButton(SDLK_RIGHT, S9xGetCommandT("Joypad1 Right"), false);
+//     S9xMapButton(SDLK_LEFT, S9xGetCommandT("Joypad1 Left"), false);
+//     S9xMapButton(SDLK_DOWN, S9xGetCommandT("Joypad1 Down"), false);
+//     S9xMapButton(SDLK_UP, S9xGetCommandT("Joypad1 Up"), false);
+//     S9xMapButton(SDLK_RETURN, S9xGetCommandT("Joypad1 Start"), false);
+//     S9xMapButton(SDLK_SPACE,  S9xGetCommandT("Joypad1 Select"), false);
+//     S9xMapButton(SDLK_d, S9xGetCommandT("Joypad1 A"), false);
+//     S9xMapButton(SDLK_c, S9xGetCommandT("Joypad1 B"), false);
+//     S9xMapButton(SDLK_s, S9xGetCommandT("Joypad1 X"), false);
+//     S9xMapButton(SDLK_x, S9xGetCommandT("Joypad1 Y"), false);
+//     S9xMapButton(SDLK_a, S9xGetCommandT("Joypad1 L"), false);
+//     S9xMapButton(SDLK_z, S9xGetCommandT("Joypad1 R"), false);
+// #endif
+// }
+void S9xInitInputDevices (int r, int l, int d, int u, int st, int sl, int a, int b, int x, int y, int lb, int rb)
 {
 	S9xUnmapAllControls();
-#ifdef USE_SDL    
-    S9xMapButton(SDLK_RIGHT, S9xGetCommandT("Joypad1 Right"), false);
-    S9xMapButton(SDLK_LEFT, S9xGetCommandT("Joypad1 Left"), false);
-    S9xMapButton(SDLK_DOWN, S9xGetCommandT("Joypad1 Down"), false);
-    S9xMapButton(SDLK_UP, S9xGetCommandT("Joypad1 Up"), false);
-    S9xMapButton(SDLK_RETURN, S9xGetCommandT("Joypad1 Start"), false);
-    S9xMapButton(SDLK_SPACE,  S9xGetCommandT("Joypad1 Select"), false);
-    S9xMapButton(SDLK_d, S9xGetCommandT("Joypad1 A"), false);
-    S9xMapButton(SDLK_c, S9xGetCommandT("Joypad1 B"), false);
-    S9xMapButton(SDLK_s, S9xGetCommandT("Joypad1 X"), false);
-    S9xMapButton(SDLK_x, S9xGetCommandT("Joypad1 Y"), false);
-    S9xMapButton(SDLK_a, S9xGetCommandT("Joypad1 L"), false);
-    S9xMapButton(SDLK_z, S9xGetCommandT("Joypad1 R"), false);
+#ifdef USE_SDL
+    S9xMapButton(r, S9xGetCommandT("Joypad1 Right"), false);
+    S9xMapButton(l, S9xGetCommandT("Joypad1 Left"), false);
+    S9xMapButton(d, S9xGetCommandT("Joypad1 Down"), false);
+    S9xMapButton(u, S9xGetCommandT("Joypad1 Up"), false);
+    S9xMapButton(st, S9xGetCommandT("Joypad1 Start"), false);
+    S9xMapButton(sl,  S9xGetCommandT("Joypad1 Select"), false);
+    S9xMapButton(a, S9xGetCommandT("Joypad1 A"), false);
+    S9xMapButton(b, S9xGetCommandT("Joypad1 B"), false);
+    S9xMapButton(x, S9xGetCommandT("Joypad1 X"), false);
+    S9xMapButton(y, S9xGetCommandT("Joypad1 Y"), false);
+    S9xMapButton(lb, S9xGetCommandT("Joypad1 L"), false);
+    S9xMapButton(rb, S9xGetCommandT("Joypad1 R"), false);
 #endif
 }
 
@@ -79,7 +98,7 @@ void S9xProcessEvents (bool8 block)
 			if (event.key.keysym.sym == SDLK_q)
 			{
 				quit_state = TRUE;
-			} 
+			}
 			else
 			{
 				S9xReportButton(event.key.keysym.mod << 16 | // keyboard mod
@@ -95,7 +114,7 @@ void S9xProcessEvents (bool8 block)
 			break;
 		}
 	}
-	
+
 	if (quit_state == TRUE)
 	{
 		printf ("Quit Event. Bye.\n");
@@ -124,5 +143,3 @@ void S9xHandlePortCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 {
 	return;
 }
-
-

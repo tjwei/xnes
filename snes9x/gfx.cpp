@@ -200,8 +200,10 @@ static int	font_width = 8, font_height = 9;
 static void SetupOBJ (void);
 static void DrawOBJS (int);
 static void DisplayFrameRate (void);
+#ifdef fancy
 static void DisplayPressedKeys (void);
 static void DisplayWatchedAddresses (void);
+#endif
 static void DisplayStringFromBottom (const char *, int, int, bool);
 static void DrawBackground (int, uint8, uint8);
 static void DrawBackgroundMosaic (int, uint8, uint8);

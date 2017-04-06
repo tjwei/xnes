@@ -3,10 +3,10 @@ Install emscripten and make sure emcc is in your $PATH.
 ./buildall
 see output for compiled results.
 
-snem port is outdated, can only be compiled by a very old version of emscripten. 
+snem port is outdated, can only be compiled by a very old version of emscripten.
 I might update it in future but snes9x seems to be fast enough for modern devices.
 
-snes9x port is updated for emscripten 1.34.3
+snes9x port requires emscripten 1.36+
 
 snes9x is build with sound by default. comment out -Dsound in snes9x/sdl/buildhtml to disable sound.
 
@@ -17,4 +17,4 @@ Blog posts (Tradition Chinese)
 http://weijr-note.blogspot.tw/2012/06/javascript-snes-emulator-wip.html # Orginal version (6/22/2012)
 http://weijr-note.blogspot.tw/2012/08/js.html                   # more videos
 http://weijr-note.blogspot.tw/2012/08/coscup-2012.html          # COSCUP slides
-   
+

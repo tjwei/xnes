@@ -1,0 +1,1334 @@
+<!doctype html>
+<html lang="en-us">
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Snes9X</title>
+  <head>
+    <style>
+      BODY, HTML {
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+        overflow: hidden;
+      }
+
+      #menu {
+        width: 25%;
+        min-width: 300px;
+        height: 100%;
+        padding: 1%;
+        color: #666;
+        border-right: solid 1px #CCC;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 5899;
+        background-color: white;
+        box-shadow: 4px 0px 2px -2px #EEE;
+      }
+
+      #menu-title {
+        font-size: 30px;
+        text-shadow: 1px 1px 2px #777;
+        display: none;
+      }
+
+      #modal-backdrop {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 5900;
+        display: none;
+      }
+
+      .modal-content {
+        position: absolute;
+        width: 70%;
+        height: 65%;
+        top: 10%;
+        left: 10%;
+        overflow-y: scroll;
+        z-index: 5901;
+        background-color: white;
+        padding: 5%;
+        display: none;
+      }
+
+      #about-div h1 span {
+        text-shadow: 1px 1px 2px #777;
+      }
+
+      #main-content {
+        position: absolute;
+        top: 2%;
+        left: 27%;
+        width: 75%;
+        height: 100%;
+        background-color: #EEE;
+      }
+
+      #content-title {
+        color: #999;
+        font-size: 40px;
+        /*width: 820px;*/
+        width: 100%;
+        height: 60px;
+        border-bottom: solid 1px #CCC;
+        box-shadow: 0 4px 2px -2px #EEE;
+        background-color: white;
+      }
+
+      #content-title span {
+        text-shadow: 1px 1px 2px #777;
+      }
+
+      #canvas-wrapper {
+        border: 1px solid #CCC;
+        width: 820px;
+        height: 620px;
+        margin-top: 20px;
+        margin-left: 35px;
+        box-shadow: 0 4px 2px -2px #999;
+        background-color: white;
+      }
+
+      #game-canvas {
+        /*
+         * Following comment and border val are from orignal emscripten port. Although I doubt
+         * it matters (prob meant for desktop ports that use mouse), I've kept them.
+         */
+        /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+        border: 0px none;
+        /* end */
+        width: 800px;
+        height: 600px;
+        position: relative;
+        top: 10px;
+        left: 10px;
+      }
+
+      #load-file {
+        position: absolute;
+        top: 572px;
+        left: 812px;
+        z-index: 5800;
+        color: white;
+      }
+
+      #file-selector {
+        position: absolute;
+        left: 50%;
+        opacity: 0;
+        top: 608px;
+        left: 812px;
+        z-index: 5801;
+      }
+
+      #console-output {
+        width: 800px;
+        height: 15%;
+        min-height: 100px;
+        margin-top: 10px;
+        opacity: 0;
+        margin-left: 35px;
+        padding-top: 1px;
+        padding-left: 10px;
+        padding-right: 10px;
+        overflow-y: scroll;
+        box-shadow: 0 4px 2px -2px #999;
+      }
+
+      #hamburgler {
+        background: no-repeat center/90% url("../snes9x/icons/burger2.png");
+        position: absolute;
+        left: 20px;
+        top: 10px;
+        z-index: 5500;
+        width: 50px;
+        height: 50px;
+        display: none;
+        border: solid 1px #CCC;
+        border-radius: 5px;
+      }
+
+      #about-closer {
+        position: relative;
+        top: 50%;
+        left: 90%;
+      }
+
+      #keymap-div td {
+        padding: 8px;
+      }
+
+      #keymap-bttns {
+        position: relative;
+        left: 75%;
+        top: -5%;
+      }
+
+      #keymap-bttns .rctngl-bttn {
+        display: inline-block;
+        margin-left: 10px;
+      }
+
+      .rctngl-bttn {
+        border-radius: 6px;
+        height: 50px;
+        width: 110px;
+        text-align: center;
+        padding-top: 15px;
+        font-size: 25px;
+        box-shadow: 3px 3px 20px #999;
+      }
+
+      .closer {
+        color: white;
+        background-color: #f70474;
+      }
+
+      .vert-center-bttn {
+        position: relative;
+        bottom: 12%;
+      }
+
+      .row {
+        width: 100%;
+        height: 50px;
+        border-bottom: solid 1px #CCC;
+        clear: both;
+        padding-top: 30px;
+        box-shadow: 0 4px 2px -2px #EEE;
+      }
+
+      .linear {
+        display: inline-block;
+      }
+
+      .right-align {
+        float: right;
+        margin-left: 2%;
+      }
+
+      .small-round-bttn {
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 35px;
+        width: 42px;
+        height: 40px;
+        box-shadow: 1px 1px 10px #999;
+        padding-bottom: 3px;
+      }
+
+      .large-round-bttn {
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 72px;
+        text-align: center;
+        width: 90px;
+        padding-bottom: 10px;
+        height: 80px;
+        box-shadow: 3px 3px 20px #999;
+      }
+
+      .bttn-color {
+        background-color: #079af1;
+        color: white;
+      }
+
+      .not-implemented {
+        color: #CCC;
+      }
+
+      .switch-toggle {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      .switch-toggle input {
+        display:none;
+      }
+
+      .slider-toggle {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        box-shadow: 1px 1px 10px #666;
+      }
+
+      .slider-toggle:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      input:checked + .slider-toggle {
+        background-color: #079af1;
+      }
+
+      input:focus + .slider-toggle {
+        box-shadow: 0 0 1px #079af1;
+      }
+
+      input:checked + .slider-toggle:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+
+      .slider-toggle.round {
+        border-radius: 34px;
+      }
+
+      .slider-toggle.round:before {
+        border-radius: 50%;
+      }
+
+      .menu-animation-in {
+        -webkit-transition: -webkit-transform: 500ms ease-out;
+        -moz-transition: -moz-transform 500ms ease-out;
+        -o-transition: -o-transform 500ms ease-out;
+        transition: transform 500ms ease-out;
+        -webkit-transform: translate(320px) !important;
+        -moz-transform:    translate(320px) !important;
+        -ms-transform:     translate(320px) !important;
+        -o-transform:      translate(320px) !important;
+        transform:         translate(320px) !important;
+      }
+
+      .menu-animation-out {
+        -webkit-transition: -webkit-transform: 500ms ease-in;
+        -moz-transition: -moz-transform 500ms ease-in;
+        -o-transition: -o-transform 500ms ease-in;
+        transition: transform 500ms ease-in;
+        -webkit-transform: translate(0px) !important;
+        -moz-transform:    translate(0px) !important;
+        -ms-transform:     translate(0px) !important;
+        -o-transform:      translate(0px) !important;
+        transform:         translate(0px) !important;
+      }
+
+      .spinner {
+        height: 50px;
+        width: 50px;
+        margin: 0px auto;
+        -webkit-animation: rotation .8s linear infinite;
+        -moz-animation: rotation .8s linear infinite;
+        -o-animation: rotation .8s linear infinite;
+        animation: rotation 0.8s linear infinite;
+        border-left: 10px solid rgb(0,150,240);
+        border-right: 10px solid rgb(0,150,240);
+        border-bottom: 10px solid rgb(0,150,240);
+        border-top: 10px solid rgb(100,0,200);
+        border-radius: 100%;
+        background-color: rgb(200,100,250);
+      }
+      @-webkit-keyframes rotation {
+        from {-webkit-transform: rotate(0deg);}
+        to {-webkit-transform: rotate(360deg);}
+      }
+      @-moz-keyframes rotation {
+        from {-moz-transform: rotate(0deg);}
+        to {-moz-transform: rotate(360deg);}
+      }
+      @-o-keyframes rotation {
+        from {-o-transform: rotate(0deg);}
+        to {-o-transform: rotate(360deg);}
+      }
+      @keyframes rotation {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+      }
+
+      /*
+       * Based on Google's Material Design breakpoints.
+       */
+
+      /* mobile   e.g. nexus5/iphone6 */
+      @media all and (min-width: 0px) and (max-width: 600px) (orientation: portrait) {
+        BODY {
+          background-color: blue;
+        }
+      }
+
+      /* mobile landscape*/
+      @media all and (min-width: 0px) and (max-width: 960px) and (orientation: landscape) {
+        BODY {
+          background-color: black;
+        }
+
+        #game-canvas {
+          width: 400px;
+          height: 300px;
+        }
+
+        #content-title {
+          display: none;
+        }
+
+        #menu {
+          left: -320px;
+          width: 300px;
+          overflow-y: scroll;
+          z-index: 6000;
+        }
+
+        #menu-title {
+          display: block;
+        }
+
+        .large-round-bttn {
+          box-shadow: none;
+        }
+
+        #hamburgler {
+          display: block;
+          background: no-repeat center/150% url("../snes9x/icons/burger3.png");
+          border: none;
+        }
+
+        #canvas-wrapper {
+          position: initial;
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: -2px;
+          background-color: white;
+          width: 410px;
+          height: 310px;
+        }
+
+        #console-output {
+          width: 410;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #main-content {
+          position: initial;
+          width: 100%;
+          height: 100%;
+          margin-top: -2px;
+        }
+
+        #load-file {
+          top: auto;
+          left: auto;
+          right: 30px;
+          bottom: 25px;
+        }
+      }
+
+      /* tablet   e.g. ipad/ipad pro */
+      @media all and (min-width: 601px) and (max-width: 1000px) and (orientation : portrait) {
+        #menu {
+          left: -320px;
+          width: 300px;
+          z-index: 6005;
+          box-shadow: 4px 0px 2px -2px #000;
+        }
+
+        #menu-title {
+          display: block;
+        }
+
+        #hamburgler {
+          display: block;
+        }
+
+        #game-canvas {
+          width: 600px;
+          height: 450px;
+        }
+
+        #main-content {
+          position: initial;
+          width: 100%;
+          height: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #canvas-wrapper {
+          position: initial;
+          width: 620px;
+          height: 470px;
+        }
+
+        #console-output {
+          width: 620;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #content-title {
+          border: none;
+          margin-left: 50px;
+        }
+
+        #load-file {
+          top: auto;
+          left: auto;
+          right: 30%;
+          bottom: 30%;
+        }
+      }
+
+      /* tablet landscape */
+      @media all and (min-width: 961px) and (max-width: 1281px) and (orientation: landscape) {
+        #menu {
+          left: -320px;
+          width: 300px;
+          z-index: 6005;
+          box-shadow: 4px 0px 2px -2px #000;
+        }
+
+        #menu-title {
+          display: block;
+        }
+
+        #hamburgler {
+          display: block;
+        }
+
+        #game-canvas {
+          width: 600px;
+          height: 450px;
+        }
+
+        #main-content {
+          position: initial;
+          width: 100%;
+          height: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #content-title {
+          padding-left: 50px;
+        }
+
+        #canvas-wrapper {
+          position: initial;
+          margin-left: auto;
+          margin-right: auto;
+          width: 620px;
+          height: 470px;
+        }
+
+        #console-output {
+          width: 620px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        #load-file {
+          top: auto;
+          left: auto;
+          right: 3%;
+          bottom: 5%;
+        }
+      }
+    </style>
+  <body>
+    <progress value="0" max="100" id="progress" hidden=1></progress>
+    <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
+    <div class="emscripten" id="status">Downloading...</div>
+    <div id="keymap-div" class="modal-content">
+      <table border="1">
+        <tr>
+          <td>Right:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>Left:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>Down:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>Up:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>Select:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>Start:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>A:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>B:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>X:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>Y:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>L:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+        <tr>
+          <td>R:</td>
+          <td><input type="text" class="keymap-input" data-keycode="0"></td>
+        </tr>
+      </table>
+      <div id="keymap-bttns">
+        <div class="rctngl-bttn closer" id="cancel-keymap">CANCEL</div>
+        <div class="rctngl-bttn bttn-color" id="save-keymap">SAVE</div>
+      </div>
+    </div>
+    <div id="about-div" class="modal-content">
+      <h1><span style="color:blue;">S</span><span style="color:red;">n</span><span style="color:green;">e</span><span style="color:yellow;">s</span><span style="color:#666;">9x</span> <span style="color:red;text-shadow:none;">Super Nintendo</span>  <span style="color:#777;text-shadow:none;">Emulator</span></h1>
+      <h3 style="color:#999;font-style:italic;">Compiled via <a href="http://kripken.github.io/emscripten-site/">Emscripten</a>.</h3>
+      <p>
+        Port by <a href="https://github.com/tjwei">tjwei</a>, save functionality and
+        interface by <a href="https://github.com/jasmith79">jasmith79</a>. For more
+        info check out the repo at <a href="https://github.com/tjwei/xnes">github</a>.
+      </p>
+      <p>
+        <a href="http://www.snes9x.com/">Snes9x homepage</a>.
+      </p>
+      <div class="closer rctngl-bttn" id="about-closer">CLOSE</div>
+    </div>
+    <div id="modal-backdrop"></div>
+    <div id="hamburgler"></div>
+    <div id="menu">
+      <div class="row" id="menu-title">
+        <span style="margin-left: 5%;"><span style="color:blue;">S</span><span style="color:red;">n</span><span style="color:green;">e</span><span style="color:yellow;">s</span><span style="color:#666;">9x</span> <span style="color:#555;">Emulator</span>
+      </div>
+      <div class="row">
+        <label>Frameskip</label>
+        <div class="small-round-bttn linear bttn-color right-align vert-center-bttn" id="fskip-plus">
+          <span>+</span>
+        </div>
+        <div class="small-round-bttn linear bttn-color right-align vert-center-bttn" id="fskip-minus">
+          <span>&#8722;</span>
+        </div>
+        <div class="small-round-bttn linear right-align vert-center-bttn" style="box-shadow:none;">
+          <span id="fskip-text" style="color:#CCC;">0</span>
+        </div>
+      </div>
+      <div class="row">
+        <label>Fullscreen</label>
+        <label class="switch-toggle right-align vert-center-bttn">
+          <input type="checkbox" id="fullscreen-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <label>Transparency</label>
+        <label class="switch-toggle right-align vert-center-bttn">
+          <input type="checkbox" id="transparency-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <label>Display FPS</label>
+        <label class="switch-toggle right-align vert-center-bttn">
+          <input type="checkbox" id="fps-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <label>Console Output</label>
+        <label class="switch-toggle right-align vert-center-bttn">
+          <input type="checkbox" id="output-toggle">
+          <div class="slider-toggle round"></div>
+        </label>
+      </div>
+      <div class="row">
+        <span id="control-mappings">Controls</span>
+      </div>
+      <div class="row">
+        <span id="about">About</span>
+      </div>
+    </div>
+    <div id="main-content">
+      <div id="content-title">
+        <span style="margin-left: 5%;"><span style="color:blue;">S</span><span style="color:red;">n</span><span style="color:green;">e</span><span style="color:yellow;">s</span><span style="color:#666;">9x</span> <span style="text-shadow:none;color:#079af1;">Super Nintendo Emulator</span></span>
+      </div>
+      <div id="canvas-wrapper">
+        <canvas id="game-canvas" oncontextmenu="event.preventDefault()"></canvas>
+      </div>
+      <label for="file-selector" class="large-round-bttn bttn-color" id="load-file">+</label>
+      <input type="file" id="file-selector">
+      <textarea id="console-output"></textarea>
+    </div>
+    <script>
+      // test for canvas and webgl support
+      (function() {
+        var cnv, ctx, msg = 'Your browser doesn\'t seem to support SNES9x.' +
+           ' Please use a more modern browser like Google Chrome' +
+           ' or Mozilla Firefox.';
+
+        try {
+          cnv = document.createElement('canvas');
+        } catch (e) {
+          // no-op
+        }
+
+        if (!cnv) {
+          alert(msg);
+          return;
+        }
+
+        try {
+          ctx = cnv.getContext('webgl');
+        } catch (e) {
+          // no-op
+        }
+
+        if (!ctx) {
+          try {
+            ctx = cnv.getContext('experimental-webgl');
+          } catch (e) {
+            // no-op
+          }
+        }
+
+        if (!ctx) {
+          alert(msg);
+        }
+
+        return;
+      })();
+
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+      var spinnerElement = document.getElementById('spinner');
+
+      var hide = function(el) {
+        el.style.display = 'none';
+        return el;
+      };
+
+      var show = function(el) {
+        el.style.display = 'block';
+        return el;
+      };
+
+      // Call with JavaScript key event keyCode
+      var getSDLKey = function(keycode) {
+        switch (keycode) {
+          case 8:  // BKSPACE
+          case 9:  // TAB
+            return keycode;
+          case 12: return 1180; // CLEAR
+          case 13: // RETURN/ENTER
+            return keycode;
+
+          //JavaScript doesn't distinguish lshift and rshift, lcntrl/rcntrl, etc.
+          case 16: return 1249; // SHIFT
+          case 17: return 1248; // CTRL
+          case 18: return 1250; // ALT
+          case 19: return 1096; // SDLK_PAUSE
+          case 20: return 1081; // CAPS LOCK
+
+          case 27:                 // ESC
+          case 32: return keycode; // SPACE
+          case 33: return 1099;    // PG UP
+          case 34: return 1102;    // PG DWN
+          case 35: return 1101;    // END
+          case 36: return 1098;    // HOME
+
+          // arrow keys
+          case 37: return 1104; // LEFT
+          case 38: return 1106; // UP
+          case 39: return 1103; // RIGHT
+          case 40: return 1105; // DOWN
+
+          case 41: return 1143; // SELECT
+          case 42: return 0;    // PRINT doesn't seem to be SDLmapped
+          case 43: return 1140; // EXECUTE
+          case 44: return 1094; // PRINTSCREEN
+          case 45: return 1097; // INS
+          case 46: return 127;  // DEL
+
+          // Numbers 0-9
+          case 48:
+          case 49:
+          case 50:
+          case 51:
+          case 52:
+          case 53:
+          case 54:
+          case 55:
+          case 56:
+          case 57:
+          case 58: // colon
+          case 59: // semicolon
+          case 60: // <
+          case 61: // =
+          case 64: // @
+            return keycode;
+
+          // Alphabet. JavaScript uses the upper case ascii codes, SDL uses the lower. So we add.
+          case 65:
+          case 66:
+          case 67:
+          case 68:
+          case 69:
+          case 70:
+          case 71:
+          case 72:
+          case 73:
+          case 74:
+          case 75:
+          case 76:
+          case 77:
+          case 78:
+          case 79:
+          case 80:
+          case 81:
+          case 82:
+          case 83:
+          case 84:
+          case 85:
+          case 86:
+          case 87:
+          case 88:
+          case 89:
+          case 90:
+            return keycode + 32;
+
+          // AFAIK META not mapped in current emSDL, difficult to use through browser anyway on
+          // most systems
+          case 91: return 0; // LMETA
+          case 92: return 0; // RMETA/Menu
+          case 93: return 0; // RMETA
+
+          // KP numbers 0-9
+          case 96: return 1113;
+          case 97: return 1114;
+          case 98: return 1115;
+          case 99: return 1116;
+          case 100: return 1117;
+          case 101: return 1118;
+          case 102: return 1119;
+          case 103: return 1120;
+          case 104: return 1121;
+          case 105: return 1122;
+
+          case 106: return 1109; // KP multiply
+          case 107: return 1111; // KP add
+          case 108: return 1123; // KP decimal
+          case 109: return 1110; // KP subtract
+          case 110: return 1123; // KP decimal
+          case 111: return 1108; // KP divide
+
+          // function keys 1-24
+          case 112: return 1082;
+          case 113: return 1083;
+          case 114: return 1084;
+          case 115: return 1085;
+          case 116: return 1086;
+          case 117: return 1087;
+          case 118: return 1088;
+          case 119: return 1089;
+          case 120: return 1090;
+          case 121: return 1091;
+          case 122: return 1092;
+          case 123: return 1093;
+          case 124: return 1128;
+          case 125: return 1129;
+          case 126: return 1130;
+          case 127: return 1131;
+          case 128: return 1132;
+          case 129: return 1133;
+          case 130: return 1134;
+          case 131: return 1135;
+          case 132: return 1136;
+          case 133: return 1137;
+          case 134: return 1138;
+          case 135: return 1139;
+
+          case 144: return 1107; // NUMLOCK
+          case 145: return 1095; // SCROLLLOCK
+          case 160: return 94;   // ^
+          case 161: return 33;   // !
+          case 163: return 35;   // #
+          case 164: return 36;   // $
+          case 170: return 42;   // *
+          case 188: return 44;   // ,
+          case 189: return 45;   // - (dash)
+          case 190: return 46;   // .
+          case 191: return 47;   // /
+          case 193: return 63;   // ?
+          case 194: return 1123; // KP decimal Chrome
+          case 219: return 91;   // [
+          case 220: return 92;   // backslash
+          case 221: return 93;   // ]
+          case 222: return 39;   // '
+          case 223: return 96;   // ` (backtick)
+
+          default: return 0;
+        }
+      };
+
+      var KeyCodeToPrintable = (function() {
+        var jsKeyMapping = {
+          8 : "Backspace",
+          9 : "Tab",
+          12 : 'Clear',
+          13 : "Enter",
+          16 : "Shift",
+          17 : "Ctrl",
+          18 : "Alt",
+          19 : "Pause/Break",
+          20 : "Capslock",
+          27 : "Esc",
+          32 : "Space",
+          33 : "PG Up",
+          34 : "PG Down",
+          35 : "End",
+          36 : "Home ",
+          37 : "L Arrow ",
+          38 : "U Arrow ",
+          39 : "R Arrow",
+          40 : "D Arrow ",
+          41 : "Select",
+          42 : "Print",
+          43 : "Execute",
+          44 : "Print Screen",
+          45 : "Insert ",
+          46 : "Delete",
+          48 : "0",
+          49 : "1",
+          50 : "2",
+          51 : "3",
+          52 : "4",
+          53 : "5",
+          54 : "6",
+          55 : "7",
+          56 : "8",
+          57 : "9",
+          58 : ":",
+          59 : ";",
+          60 : "<",
+          61 : "=",
+          64 : "@",
+          65 : "A",
+          66 : "B",
+          67 : "C",
+          68 : "D",
+          69 : "E",
+          70 : "F",
+          71 : "G",
+          72 : "H",
+          73 : "I",
+          74 : "J",
+          75 : "K",
+          76 : "L",
+          77 : "M",
+          78 : "N",
+          79 : "O",
+          80 : "P",
+          81 : "Q",
+          82 : "R",
+          83 : "S",
+          84 : "T",
+          85 : "U",
+          86 : "V",
+          87 : "W",
+          88 : "X",
+          89 : "Y",
+          90 : "Z",
+          96 : "Keypad 0",
+          97 : "Keypad 1",
+          98 : "Keypad 2",
+          99 : "Keypad 3",
+          100 : "Keypad 4",
+          101 : "Keypad 5",
+          102 : "Keypad 6",
+          103 : "Keypad 7",
+          104 : "Keypad 8",
+          105 : "Keypad 9",
+          106 : "Keypad *",
+          107 : "Keypad +",
+          108 : "Keypad .",
+          109 : "Keypad -",
+          110 : "Keypad .",
+          111 : "Keypad /",
+          112 : "f1",
+          113 : "f2",
+          114 : "f3",
+          115 : "f4",
+          116 : "f5",
+          117 : "f6",
+          118 : "f7",
+          119 : "f8",
+          120 : "f9",
+          121 : "f10",
+          122 : "f11",
+          123 : "f12",
+          124 : "f13",
+          125 : "f14",
+          126 : "f15",
+          127 : "f16",
+          128 : "f17",
+          129 : "f18",
+          130 : "f19",
+          131 : "f20",
+          132 : "f21",
+          133 : "f22",
+          134 : "f23",
+          135 : "f24",
+          144 : "Numlock",
+          145 : "ScrollLock",
+          160 : "^",
+          161: '!',
+          163 : "#",
+          164: '$',
+          170: '*',
+          188 : ",",
+          189 : "-",
+          190 : ".",
+          191 : "/",
+          194 : "Keypad .",
+          219 : "[",
+          220 : "\\",
+          221 : "]",
+          222 : "'",
+          223 : "`",
+        };
+
+        return function(keycode) {
+          return jsKeyMapping[keycode] || "Err";
+        }
+      })();
+
+      window.Module = {
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('console-output');
+          element.value = ''; // clear browser cache
+          return function(text) {
+            var txt = arguments.length > 1 ? [].slice.call(arguments).join(' ') : text;
+            element.value += txt + "\n";
+            element.scrollTop = element.scrollHeight; // focus on bottom
+          };
+        })(),
+        printErr: function(text) {
+          var txt = arguments.length > 1 ? [].slice.call(arguments).join(' ') : text;
+          console.error(txt);
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('game-canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) {
+            alert('WebGL context lost. You will need to reload the page.');
+            e.preventDefault();
+          }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          if (m && now - Date.now() < 30) return; // if this is a progress update, skip if too soon
+          if (m) {
+            text = m[1];
+            progressElement.value = parseInt(m[2])*100;
+            progressElement.max = parseInt(m[4])*100;
+            progressElement.hidden = false;
+            spinnerElement.hidden = false;
+          } else {
+            progressElement.value = null;
+            progressElement.max = null;
+            progressElement.hidden = true;
+            if (!text) spinnerElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ?
+            'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' :
+            'All downloads complete.'
+          );
+        }
+      };
+
+      Module.setStatus('Downloading...');
+      window.onerror = function() {
+        Module.setStatus('Exception thrown, see JavaScript console');
+        spinnerElement.style.display = 'none';
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+      // Wires up the event handlers, called from compiled c code to give file
+      // system a chance to sync.
+      window.initSNES = function() {
+        var modal = document.getElementById('modal-backdrop');
+        var menu = document.getElementById('menu');
+        var aboutDiv = document.getElementById('about-div');
+        var hamburger = document.getElementById('hamburgler');
+        var fileChooser = document.getElementById('file-selector');
+        var frameskipInc = document.getElementById('fskip-plus');
+        var frameskipDec = document.getElementById('fskip-minus');
+        var frameskipSpan = document.getElementById('fskip-text');
+        var transToggle = document.getElementById('transparency-toggle');
+        var fpsToggle = document.getElementById('fps-toggle');
+        var fullscreen = document.getElementById('fullscreen-toggle');
+        var outputToggle = document.getElementById('output-toggle');
+        var controlMapDiv = document.getElementById('control-mappings');
+        var mapDiv = document.getElementById('keymap-div');
+        var cout_print = Module.print;
+        var filename = "";
+
+        var hideMenu = function() {
+          if (hamburger && window.getComputedStyle(hamburger).display !== 'none') {
+            menu.classList.remove('menu-animation-in');
+            menu.classList.add('menu-animation-out');
+            hide(modal);
+          }
+        };
+
+        var showMenu = function() {
+          if (hamburger && window.getComputedStyle(hamburger).display !== 'none') {
+            menu.classList.remove('menu-animation-out');
+            menu.classList.add('menu-animation-in');
+            show(modal);
+          }
+        };
+
+        var setSDLKeys = (function() {
+          var init = Module.cwrap('S9xInitInputDevices', null, [
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number',
+            'number'
+          ]);
+          return function(keyarr) {
+            init.apply(Module, keyarr.slice(0,11).map(getSDLKey));
+            return keyarr;
+          };
+        })();
+
+        var readKeyFile = (function() {
+          // mapping from original port by tjwei
+          var defaultKeyArray = [39, 37, 40, 38, 32, 13, 68, 67, 83, 88, 65, 90];
+          return function() {
+            var keyfile = window.localStorage.getItem('snes9x_keymap.json');
+            if (keyfile) {
+              cout_print('Keymap loaded.');
+              return JSON.parse(keyfile);
+            } else {
+              cout_print("No user keymap, writing default...");
+              writeKeyFile(defaultKeyArray);
+              return defaultKeyArray;
+            }
+          }
+        })();
+
+        var writeKeyFile = function(keyarr) {
+          cout_print("Saving keymap...");
+          window.localStorage.setItem('snes9x_keymap.json', JSON.stringify(keyarr));
+          return keyarr;
+        };
+
+        var writeInputs = function(keyarr) {
+          [].slice.call(mapDiv.querySelectorAll('input')).forEach(function(inp, i) {
+            inp.setAttribute('data-keycode', keyarr[i]);
+            inp.value = '' + KeyCodeToPrintable(keyarr[i]);
+          });
+
+          return keyarr;
+        };
+
+        var readInputs = function() {
+          return [].slice.call(mapDiv.querySelectorAll('input')).map(function(inp) {
+            return +inp.getAttribute('data-keycode');
+          });
+        };
+
+        var frameskipAdjust = (function() {
+          var frameskip = 0;
+          var set_frameskip = Module.cwrap('set_frameskip', 'number', ['number']);;
+          var fn = function(n) {
+            return function(evt) {
+              frameskip += n;
+              if (frameskip < 0) frameskip = 0;
+              frameskipSpan.textContent = '' + frameskip;
+              set_frameskip(frameskip);
+              return frameskip;
+            }
+          };
+
+          fn.reset = function() {
+            frameskip = 0;
+            frameskipSpan.textContent = '0';
+            set_frameskip(frameskip);
+          };
+
+          return fn;
+        })();
+
+        var toggleTransparency = (function() {
+          var snes_transparency = 1;
+          return function() {
+            snes_transparency = !snes_transparency;
+            Module._set_transparency(snes_transparency);
+            cout_print("Transparency is now " + (snes_transparency ? "on" : "off"));
+          };
+        })();
+
+        var goFullScreen = function() {
+          // var pointerlock = document.getElementById('pointer-lock').checked;
+          // var resize = document.getElementById('resize').checked;
+          // double-checked, this does expect js boolean values
+          // Module.requestFullScreen(pointerlock, resize);
+
+          // double-checked, this does expect js boolean values
+          Module.requestFullScreen(true, true);
+        };
+
+        var snesReadFile = function(evt) {
+          var f = evt.currentTarget.files[0];
+          cout_print(f.name);
+          filename = f.name;
+          var reader = new FileReader();
+          reader.onprogress = function(e) {
+            if (e.lengthComputable){
+              cout_print(Math.round((e.loaded / e.total) * 100) + "%");
+            } else {
+              count_print(e.loaded + "bytes");
+            }
+
+          };
+          reader.onload = function(e) {
+            cout_print(f.name + " loaded");
+            Module.FS_createDataFile("/", f.name, new Uint8Array(this.result) , true, true);
+          };
+          reader.readAsArrayBuffer(f);
+          setTimeout(snesMain, 1000);
+        };
+
+        var snesMain = (function() {
+          var interval = null;
+          var run = Module.cwrap('run', null, ['string']);
+          return function() {
+            clearInterval(interval);
+            interval = setInterval(Module._S9xAutoSaveSRAM, 10000);
+            frameskipAdjust.reset();
+            run(filename);
+          };
+        })();
+
+        // initialize key mappings
+        writeInputs(setSDLKeys(readKeyFile()));
+
+        // make sure we sync state before tab closes
+        window.addEventListener('beforeunload', Module._S9xAutoSaveSRAM);
+        fpsToggle.addEventListener('click', Module._toggle_display_framerate);
+        modal.addEventListener('click', hideMenu);
+        hamburger.addEventListener('click', showMenu);
+        fileChooser.addEventListener('change', snesReadFile);
+        frameskipInc.addEventListener('click', frameskipAdjust(1));
+        frameskipDec.addEventListener('click', frameskipAdjust(-1));
+        transToggle.addEventListener('click', toggleTransparency);
+        fullscreen.addEventListener('click', goFullScreen);
+
+        outputToggle.addEventListener('click', (function() {
+          var out = document.getElementById('console-output');
+          return function() {
+            out.style.opacity = '' + Number(!+out.style.opacity);
+          };
+        })());
+
+        controlMapDiv.addEventListener('click', function() {
+          show(modal);
+          show(mapDiv);
+        });
+
+        document.getElementById('cancel-keymap').addEventListener('click', function() {
+          hide(modal);
+          hide(mapDiv);
+        });
+
+        document.getElementById('save-keymap').addEventListener('click', function() {
+          writeKeyFile(setSDLKeys(readInputs()));
+          hide(modal);
+          hide(mapDiv);
+        });
+
+        document.getElementById('about').addEventListener('click', function() {
+          hideMenu();
+          show(modal);
+          show(aboutDiv);
+        });
+
+        document.getElementById('about-closer').addEventListener('click', function(evt) {
+          hide(modal);
+          hide(aboutDiv);
+        });
+
+        [].slice.call(document.querySelectorAll('.keymap-input')).forEach(function(el) {
+          el.addEventListener('keydown', function(evt) {
+            evt.preventDefault();
+            el.value = KeyCodeToPrintable(evt.keyCode);
+            el.setAttribute('data-keycode', evt.keyCode);
+          });
+        });
+
+        if (window.location.href.match(/[&?]debug=true/i)) {
+          fpsToggle.dispatchEvent(new Event('click'), {bubbles: true});
+          outputToggle.dispatchEvent(new Event('click'), {bubbles: true});
+          fpsToggle.checked = true;
+          outputToggle.checked = true;
+        }
+
+      };
+    </script>
+    {{{ SCRIPT }}}
+  </body>
+</html>

@@ -216,7 +216,7 @@
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
-static bool8	stopMovie = TRUE;
+// static bool8	stopMovie = TRUE;
 static char		LastRomFilename[PATH_MAX + 1] = "";
 
 // from NSRT
@@ -948,7 +948,8 @@ static bool8 is_SameGame_Add_On (uint8 *, uint32);
 static bool8 is_GNEXT_BIOS (uint8 *, uint32);
 static bool8 is_GNEXT_Add_On (uint8 *, uint32);
 static uint32 caCRC32 (uint8 *, uint32, uint32 crc32 = 0xffffffff);
-static uint32 ReadUPSPointer (const uint8 *, unsigned &, unsigned);
+// unused? not externed or used anywhere in file...
+// static uint32 ReadUPSPointer (const uint8 *, unsigned &, unsigned);
 static bool8 ReadUPSPatch (Reader *, long, int32 &);
 static long ReadInt (Reader *, unsigned);
 static bool8 ReadIPSPatch (Reader *, long, int32 &);
@@ -2157,11 +2158,11 @@ bool8 CMemory::SaveSRAM (const char *filename)
 		if (file)
 		{
 			size_t	ignore;
-			printf("Writing file %s.\n", file);
+			printf("Writing file %s.\n", sramName);
 			ignore = fwrite((char *) SRAM, 1, size, file);
 			fclose(file);
 		#ifdef __linux
-		  printf("Changing permissions for file %s.\n", file);
+		  printf("Changing permissions for file %s.\n", sramName);
 			ignore = chown(sramName, getuid(), getgid());
 		#endif
 
@@ -3917,7 +3918,7 @@ static bool8 ReadBPSPatch (Reader *r, long, int32 &rom_size)
 	if(patch_crc32 != pp_crc32) { delete[] data; return false; }  //patch is corrupted
 	if(rom_crc32 != source_crc32) { delete[] data; return false; }  //patch is for a different ROM
 
-	uint32 source_size = XPSdecode(data, addr, size);
+	// uint32 source_size = XPSdecode(data, addr, size);
 	uint32 target_size = XPSdecode(data, addr, size);
 	uint32 metadata_size = XPSdecode(data, addr, size);
 	addr += metadata_size;
@@ -3937,7 +3938,10 @@ static bool8 ReadBPSPatch (Reader *r, long, int32 &rom_size)
 
 		switch((int)mode) {
 			case SourceRead:
-				while(length--) patched_rom[outputOffset++] = Memory.ROM[outputOffset];
+				while(length--) {
+					patched_rom[outputOffset] = Memory.ROM[outputOffset + 1];
+					outputOffset++;
+				}
 				break;
 			case TargetRead:
 				while(length--) patched_rom[outputOffset++] = data[addr++];

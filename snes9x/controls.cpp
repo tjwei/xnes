@@ -325,6 +325,7 @@ static int32						curcontrollers[2] = { NONE,    NONE };
 static int32						newcontrollers[2] = { JOYPAD0, NONE };
 static char							buf[256];
 
+#ifdef FANCY
 static const char	*color_names[32] =
 {
 	"Trans",
@@ -360,6 +361,7 @@ static const char	*color_names[32] =
 	"tMagicPink",
 	"tPurple"
 };
+#endif
 
 static const char	*speed_names[4] =
 {
@@ -973,157 +975,157 @@ char * S9xGetCommandName (s9xcommand_t command)
 	switch (command.type)
 	{
 		case S9xButtonJoypad:
-			if (command.button.joypad.buttons == 0)
+			if (command.input.button.joypad.buttons == 0)
 				return (strdup("None"));
-			if (command.button.joypad.buttons & 0x000f)
+			if (command.input.button.joypad.buttons & 0x000f)
 				return (strdup("None"));
 
 			s = "Joypad";
-			s += command.button.joypad.idx + 1;
+			s += command.input.button.joypad.idx + 1;
 
 			c = ' ';
-			if (command.button.joypad.toggle)	{ if (c) s += c; s += "Toggle"; c = 0; }
-			if (command.button.joypad.sticky)	{ if (c) s += c; s += "Sticky"; c = 0; }
-			if (command.button.joypad.turbo )	{ if (c) s += c; s += "Turbo";  c = 0; }
+			if (command.input.button.joypad.toggle)	{ if (c) s += c; s += "Toggle"; c = 0; }
+			if (command.input.button.joypad.sticky)	{ if (c) s += c; s += "Sticky"; c = 0; }
+			if (command.input.button.joypad.turbo )	{ if (c) s += c; s += "Turbo";  c = 0; }
 
 			c = ' ';
-			if (command.button.joypad.buttons & SNES_UP_MASK    )	{ s += c; s += "Up";     c = '+'; }
-			if (command.button.joypad.buttons & SNES_DOWN_MASK  )	{ s += c; s += "Down";   c = '+'; }
-			if (command.button.joypad.buttons & SNES_LEFT_MASK  )	{ s += c; s += "Left";   c = '+'; }
-			if (command.button.joypad.buttons & SNES_RIGHT_MASK )	{ s += c; s += "Right";  c = '+'; }
-			if (command.button.joypad.buttons & SNES_A_MASK     )	{ s += c; s += "A";      c = '+'; }
-			if (command.button.joypad.buttons & SNES_B_MASK     )	{ s += c; s += "B";      c = '+'; }
-			if (command.button.joypad.buttons & SNES_X_MASK     )	{ s += c; s += "X";      c = '+'; }
-			if (command.button.joypad.buttons & SNES_Y_MASK     )	{ s += c; s += "Y";      c = '+'; }
-			if (command.button.joypad.buttons & SNES_TL_MASK    )	{ s += c; s += "L";      c = '+'; }
-			if (command.button.joypad.buttons & SNES_TR_MASK    )	{ s += c; s += "R";      c = '+'; }
-			if (command.button.joypad.buttons & SNES_START_MASK )	{ s += c; s += "Start";  c = '+'; }
-			if (command.button.joypad.buttons & SNES_SELECT_MASK)	{ s += c; s += "Select"; c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_UP_MASK    )	{ s += c; s += "Up";     c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_DOWN_MASK  )	{ s += c; s += "Down";   c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_LEFT_MASK  )	{ s += c; s += "Left";   c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_RIGHT_MASK )	{ s += c; s += "Right";  c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_A_MASK     )	{ s += c; s += "A";      c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_B_MASK     )	{ s += c; s += "B";      c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_X_MASK     )	{ s += c; s += "X";      c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_Y_MASK     )	{ s += c; s += "Y";      c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_TL_MASK    )	{ s += c; s += "L";      c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_TR_MASK    )	{ s += c; s += "R";      c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_START_MASK )	{ s += c; s += "Start";  c = '+'; }
+			if (command.input.button.joypad.buttons & SNES_SELECT_MASK)	{ s += c; s += "Select"; c = '+'; }
 
 			break;
 
 		case S9xButtonMouse:
-			if (!command.button.mouse.left && !command.button.mouse.right)
+			if (!command.input.button.mouse.left && !command.input.button.mouse.right)
 				return (strdup("None"));
 
 			s = "Mouse";
-			s += command.button.mouse.idx + 1;
+			s += command.input.button.mouse.idx + 1;
 			s += " ";
 
-			if (command.button.mouse.left )	s += "L";
-			if (command.button.mouse.right)	s += "R";
+			if (command.input.button.mouse.left )	s += "L";
+			if (command.input.button.mouse.right)	s += "R";
 
 			break;
 
 		case S9xButtonSuperscope:
-			if (!command.button.scope.fire && !command.button.scope.cursor && !command.button.scope.turbo && !command.button.scope.pause && !command.button.scope.aim_offscreen)
+			if (!command.input.button.scope.fire && !command.input.button.scope.cursor && !command.input.button.scope.turbo && !command.input.button.scope.pause && !command.input.button.scope.aim_offscreen)
 				return (strdup("None"));
 
 			s = "Superscope";
 
-			if (command.button.scope.aim_offscreen)	s += " AimOffscreen";
+			if (command.input.button.scope.aim_offscreen)	s += " AimOffscreen";
 
 			c = ' ';
-			if (command.button.scope.fire  )	{ s += c; s += "Fire";        c = '+'; }
-			if (command.button.scope.cursor)	{ s += c; s += "Cursor";      c = '+'; }
-			if (command.button.scope.turbo )	{ s += c; s += "ToggleTurbo"; c = '+'; }
-			if (command.button.scope.pause )	{ s += c; s += "Pause";       c = '+'; }
+			if (command.input.button.scope.fire  )	{ s += c; s += "Fire";        c = '+'; }
+			if (command.input.button.scope.cursor)	{ s += c; s += "Cursor";      c = '+'; }
+			if (command.input.button.scope.turbo )	{ s += c; s += "ToggleTurbo"; c = '+'; }
+			if (command.input.button.scope.pause )	{ s += c; s += "Pause";       c = '+'; }
 
 			break;
 
 		case S9xButtonJustifier:
-			if (!command.button.justifier.trigger && !command.button.justifier.start && !command.button.justifier.aim_offscreen)
+			if (!command.input.button.justifier.trigger && !command.input.button.justifier.start && !command.input.button.justifier.aim_offscreen)
 				return (strdup("None"));
 
 			s = "Justifier";
-			s += command.button.justifier.idx + 1;
+			s += command.input.button.justifier.idx + 1;
 
-			if (command.button.justifier.aim_offscreen)	s += " AimOffscreen";
+			if (command.input.button.justifier.aim_offscreen)	s += " AimOffscreen";
 
 			c = ' ';
-			if (command.button.justifier.trigger)	{ s += c; s += "Trigger"; c = '+'; }
-			if (command.button.justifier.start  )	{ s += c; s += "Start";   c = '+'; }
+			if (command.input.button.justifier.trigger)	{ s += c; s += "Trigger"; c = '+'; }
+			if (command.input.button.justifier.start  )	{ s += c; s += "Start";   c = '+'; }
 
 			break;
 
 		case S9xButtonCommand:
-			if (command.button.command >= LAST_COMMAND)
+			if (command.input.button.command >= LAST_COMMAND)
 				return (strdup("None"));
 
-			return (strdup(command_names[command.button.command]));
+			return (strdup(command_names[command.input.button.command]));
 
 		case S9xPointer:
-			if (!command.pointer.aim_mouse0 && !command.pointer.aim_mouse1 && !command.pointer.aim_scope && !command.pointer.aim_justifier0 && !command.pointer.aim_justifier1)
+			if (!command.input.pointer.aim_mouse0 && !command.input.pointer.aim_mouse1 && !command.input.pointer.aim_scope && !command.input.pointer.aim_justifier0 && !command.input.pointer.aim_justifier1)
 				return (strdup("None"));
 
 			s = "Pointer";
 
 			c = ' ';
-			if (command.pointer.aim_mouse0    )	{ s += c; s += "Mouse1";     c = '+'; }
-			if (command.pointer.aim_mouse1    )	{ s += c; s += "Mouse2";     c = '+'; }
-			if (command.pointer.aim_scope     )	{ s += c; s += "Superscope"; c = '+'; }
-			if (command.pointer.aim_justifier0)	{ s += c; s += "Justifier1"; c = '+'; }
-			if (command.pointer.aim_justifier1)	{ s += c; s += "Justifier2"; c = '+'; }
+			if (command.input.pointer.aim_mouse0    )	{ s += c; s += "Mouse1";     c = '+'; }
+			if (command.input.pointer.aim_mouse1    )	{ s += c; s += "Mouse2";     c = '+'; }
+			if (command.input.pointer.aim_scope     )	{ s += c; s += "Superscope"; c = '+'; }
+			if (command.input.pointer.aim_justifier0)	{ s += c; s += "Justifier1"; c = '+'; }
+			if (command.input.pointer.aim_justifier1)	{ s += c; s += "Justifier2"; c = '+'; }
 
 			break;
 
 		case S9xButtonPseudopointer:
-			if (!command.button.pointer.UD && !command.button.pointer.LR)
+			if (!command.input.button.pointer.UD && !command.input.button.pointer.LR)
 				return (strdup("None"));
-			if (command.button.pointer.UD == -2 || command.button.pointer.LR == -2)
+			if (command.input.button.pointer.UD == -2 || command.input.button.pointer.LR == -2)
 				return (strdup("None"));
 
 			s = "ButtonToPointer ";
-			s += command.button.pointer.idx + 1;
+			s += command.input.button.pointer.idx + 1;
 
-			if (command.button.pointer.UD)	s += (command.button.pointer.UD == 1) ? 'd' : 'u';
-			if (command.button.pointer.LR)	s += (command.button.pointer.LR == 1) ? 'r' : 'l';
+			if (command.input.button.pointer.UD)	s += (command.input.button.pointer.UD == 1) ? 'd' : 'u';
+			if (command.input.button.pointer.LR)	s += (command.input.button.pointer.LR == 1) ? 'r' : 'l';
 
 			s += " ";
-			s += speed_names[command.button.pointer.speed_type];
+			s += speed_names[command.input.button.pointer.speed_type];
 
 			break;
 
 		case S9xAxisJoypad:
 			s = "Joypad";
-			s += command.axis.joypad.idx + 1;
+			s += command.input.axis.joypad.idx + 1;
 			s += " Axis ";
 
-			switch (command.axis.joypad.axis)
+			switch (command.input.axis.joypad.axis)
 			{
-				case 0:	s += (command.axis.joypad.invert ? "Right/Left" : "Left/Right");	break;
-				case 1:	s += (command.axis.joypad.invert ? "Down/Up"    : "Up/Down"   );	break;
-				case 2:	s += (command.axis.joypad.invert ? "A/Y"        : "Y/A"       );	break;
-				case 3:	s += (command.axis.joypad.invert ? "B/X"        : "X/B"       );	break;
-				case 4:	s += (command.axis.joypad.invert ? "R/L"        : "L/R"       );	break;
+				case 0:	s += (command.input.axis.joypad.invert ? "Right/Left" : "Left/Right");	break;
+				case 1:	s += (command.input.axis.joypad.invert ? "Down/Up"    : "Up/Down"   );	break;
+				case 2:	s += (command.input.axis.joypad.invert ? "A/Y"        : "Y/A"       );	break;
+				case 3:	s += (command.input.axis.joypad.invert ? "B/X"        : "X/B"       );	break;
+				case 4:	s += (command.input.axis.joypad.invert ? "R/L"        : "L/R"       );	break;
 				default:	return (strdup("None"));
 			}
 
 			s += " T=";
-			s += int((command.axis.joypad.threshold + 1) * 1000 / 256) / 10.0;
+			s += int((command.input.axis.joypad.threshold + 1) * 1000 / 256) / 10.0;
 			s += "%";
 
 			break;
 
 		case S9xAxisPseudopointer:
 			s = "AxisToPointer ";
-			s += command.axis.pointer.idx + 1;
-			s += command.axis.pointer.HV ? 'v' : 'h';
+			s += command.input.axis.pointer.idx + 1;
+			s += command.input.axis.pointer.HV ? 'v' : 'h';
 			s += " ";
 
-			if (command.axis.pointer.invert)	s += "-";
+			if (command.input.axis.pointer.invert)	s += "-";
 
-			s += speed_names[command.axis.pointer.speed_type];
+			s += speed_names[command.input.axis.pointer.speed_type];
 
 			break;
 
 		case S9xAxisPseudobuttons:
 			s = "AxisToButtons ";
-			s += command.axis.button.negbutton;
+			s += command.input.axis.button.negbutton;
 			s += "/";
-			s += command.axis.button.posbutton;
+			s += command.input.axis.button.posbutton;
 			s += " T=";
-			s += int((command.axis.button.threshold + 1) * 1000 / 256) / 10.0;
+			s += int((command.input.axis.button.threshold + 1) * 1000 / 256) / 10.0;
 			s += "%";
 
 			break;
@@ -1138,15 +1140,15 @@ char * S9xGetCommandName (s9xcommand_t command)
 
 		case S9xButtonMulti:
 		{
-			if (command.button.multi_idx >= (int) multis.size())
+			if (command.input.button.multi_idx >= (int) multis.size())
 				return (strdup("None"));
 
 			s = "{";
-			if (multis[command.button.multi_idx]->multi_press)	s = "+{";
+			if (multis[command.input.button.multi_idx]->multi_press)	s = "+{";
 
 			bool	sep = false;
 
-			for (s9xcommand_t *m = multis[command.button.multi_idx]; m->multi_press != 3; m++)
+			for (s9xcommand_t *m = multis[command.input.button.multi_idx]; m->multi_press != 3; m++)
 			{
 				if (m->type == S9xNoMapping)
 				{
@@ -1263,7 +1265,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 
 		if (!strncmp(name + 8, "Axis ", 5))
 		{
-			cmd.axis.joypad.idx = name[6] - '1';
+			cmd.input.axis.joypad.idx = name[6] - '1';
 			s = name + 13;
 
 			if (!strncmp(s, "Left/Right ", 11))	{ j = 0; i = 0; s += 11; }
@@ -1288,26 +1290,26 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			else
 				return (cmd);
 
-			cmd.axis.joypad.axis      = j;
-			cmd.axis.joypad.invert    = i;
+			cmd.input.axis.joypad.axis      = j;
+			cmd.input.axis.joypad.invert    = i;
 			i = get_threshold(&s);
 			if (i < 0)
 				return (cmd);
-			cmd.axis.joypad.threshold = (i - 1) * 256 / 1000;
+			cmd.input.axis.joypad.threshold = (i - 1) * 256 / 1000;
 
 			cmd.type = S9xAxisJoypad;
 		}
 		else
 		{
-			cmd.button.joypad.idx = name[6] - '1';
+			cmd.input.button.joypad.idx = name[6] - '1';
 			s = name + 8;
 			i = 0;
 
-			if ((cmd.button.joypad.toggle = strncmp(s, "Toggle", 6) ? 0 : 1))	s += i = 6;
-			if ((cmd.button.joypad.sticky = strncmp(s, "Sticky", 6) ? 0 : 1))	s += i = 6;
-			if ((cmd.button.joypad.turbo  = strncmp(s, "Turbo",  5) ? 0 : 1))	s += i = 5;
+			if ((cmd.input.button.joypad.toggle = strncmp(s, "Toggle", 6) ? 0 : 1))	s += i = 6;
+			if ((cmd.input.button.joypad.sticky = strncmp(s, "Sticky", 6) ? 0 : 1))	s += i = 6;
+			if ((cmd.input.button.joypad.turbo  = strncmp(s, "Turbo",  5) ? 0 : 1))	s += i = 5;
 
-			if (cmd.button.joypad.toggle && !(cmd.button.joypad.sticky || cmd.button.joypad.turbo))
+			if (cmd.input.button.joypad.toggle && !(cmd.input.button.joypad.sticky || cmd.input.button.joypad.turbo))
 				return (cmd);
 
 			if (i)
@@ -1337,7 +1339,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			if (i == 0 || *s != 0 || *(s - 1) == '+')
 				return (cmd);
 
-			cmd.button.joypad.buttons = i;
+			cmd.input.button.joypad.buttons = i;
 
 			cmd.type = S9xButtonJoypad;
 		}
@@ -1348,12 +1350,12 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		if (name[5] < '1' || name[5] > '2' || name[6] != ' ')
 			return (cmd);
 
-		cmd.button.mouse.idx = name[5] - '1';
+		cmd.input.button.mouse.idx = name[5] - '1';
 		s = name + 7;
 		i = 0;
 
-		if ((cmd.button.mouse.left  = (*s == 'L')))	s += i = 1;
-		if ((cmd.button.mouse.right = (*s == 'R')))	s += i = 1;
+		if ((cmd.input.button.mouse.left  = (*s == 'L')))	s += i = 1;
+		if ((cmd.input.button.mouse.right = (*s == 'R')))	s += i = 1;
 
 		if (i == 0 || *s != 0)
 			return (cmd);
@@ -1366,11 +1368,11 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		s = name + 11;
 		i = 0;
 
-		if ((cmd.button.scope.aim_offscreen     = strncmp(s, "AimOffscreen", 12) ? 0 : 1))	{ s += i = 12; if (*s == ' ') s++; else if (*s != 0) return (cmd); }
-		if ((cmd.button.scope.fire              = strncmp(s, "Fire",          4) ? 0 : 1))	{ s += i =  4; if (*s == '+') s++; }
-		if ((cmd.button.scope.cursor            = strncmp(s, "Cursor",        6) ? 0 : 1))	{ s += i =  6; if (*s == '+') s++; }
-		if ((cmd.button.scope.turbo             = strncmp(s, "ToggleTurbo",  11) ? 0 : 1))	{ s += i = 11; if (*s == '+') s++; }
-		if ((cmd.button.scope.pause             = strncmp(s, "Pause",         5) ? 0 : 1))	{ s += i =  5; }
+		if ((cmd.input.button.scope.aim_offscreen     = strncmp(s, "AimOffscreen", 12) ? 0 : 1))	{ s += i = 12; if (*s == ' ') s++; else if (*s != 0) return (cmd); }
+		if ((cmd.input.button.scope.fire              = strncmp(s, "Fire",          4) ? 0 : 1))	{ s += i =  4; if (*s == '+') s++; }
+		if ((cmd.input.button.scope.cursor            = strncmp(s, "Cursor",        6) ? 0 : 1))	{ s += i =  6; if (*s == '+') s++; }
+		if ((cmd.input.button.scope.turbo             = strncmp(s, "ToggleTurbo",  11) ? 0 : 1))	{ s += i = 11; if (*s == '+') s++; }
+		if ((cmd.input.button.scope.pause             = strncmp(s, "Pause",         5) ? 0 : 1))	{ s += i =  5; }
 
 		if (i == 0 || *s != 0 || *(s - 1) == '+')
 			return (cmd);
@@ -1383,13 +1385,13 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		if (name[9] < '1' || name[9] > '2' || name[10] != ' ')
 			return (cmd);
 
-		cmd.button.justifier.idx = name[9] - '1';
+		cmd.input.button.justifier.idx = name[9] - '1';
 		s = name + 11;
 		i = 0;
 
-		if ((cmd.button.justifier.aim_offscreen = strncmp(s, "AimOffscreen", 12) ? 0 : 1))	{ s += i = 12; if (*s == ' ') s++; else if (*s != 0) return (cmd); }
-		if ((cmd.button.justifier.trigger       = strncmp(s, "Trigger",       7) ? 0 : 1))	{ s += i =  7; if (*s == '+') s++; }
-		if ((cmd.button.justifier.start         = strncmp(s, "Start",         5) ? 0 : 1))	{ s += i =  5; }
+		if ((cmd.input.button.justifier.aim_offscreen = strncmp(s, "AimOffscreen", 12) ? 0 : 1))	{ s += i = 12; if (*s == ' ') s++; else if (*s != 0) return (cmd); }
+		if ((cmd.input.button.justifier.trigger       = strncmp(s, "Trigger",       7) ? 0 : 1))	{ s += i =  7; if (*s == '+') s++; }
+		if ((cmd.input.button.justifier.start         = strncmp(s, "Start",         5) ? 0 : 1))	{ s += i =  5; }
 
 		if (i == 0 || *s != 0 || *(s - 1) == '+')
 			return (cmd);
@@ -1402,11 +1404,11 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		s = name + 8;
 		i = 0;
 
-		if ((cmd.pointer.aim_mouse0     = strncmp(s, "Mouse1",      6) ? 0 : 1))	{ s += i =  6; if (*s == '+') s++; }
-		if ((cmd.pointer.aim_mouse1     = strncmp(s, "Mouse2",      6) ? 0 : 1))	{ s += i =  6; if (*s == '+') s++; }
-		if ((cmd.pointer.aim_scope      = strncmp(s, "Superscope", 10) ? 0 : 1))	{ s += i = 10; if (*s == '+') s++; }
-		if ((cmd.pointer.aim_justifier0 = strncmp(s, "Justifier1", 10) ? 0 : 1))	{ s += i = 10; if (*s == '+') s++; }
-		if ((cmd.pointer.aim_justifier1 = strncmp(s, "Justifier2", 10) ? 0 : 1))	{ s += i = 10; }
+		if ((cmd.input.pointer.aim_mouse0     = strncmp(s, "Mouse1",      6) ? 0 : 1))	{ s += i =  6; if (*s == '+') s++; }
+		if ((cmd.input.pointer.aim_mouse1     = strncmp(s, "Mouse2",      6) ? 0 : 1))	{ s += i =  6; if (*s == '+') s++; }
+		if ((cmd.input.pointer.aim_scope      = strncmp(s, "Superscope", 10) ? 0 : 1))	{ s += i = 10; if (*s == '+') s++; }
+		if ((cmd.input.pointer.aim_justifier0 = strncmp(s, "Justifier1", 10) ? 0 : 1))	{ s += i = 10; if (*s == '+') s++; }
+		if ((cmd.input.pointer.aim_justifier1 = strncmp(s, "Justifier2", 10) ? 0 : 1))	{ s += i = 10; }
 
 		if (i == 0 || *s != 0 || *(s - 1) == '+')
 			return (cmd);
@@ -1419,12 +1421,12 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		if (name[16] < '1' || name[16] > '8')
 			return (cmd);
 
-		cmd.button.pointer.idx = name[16] - '1';
+		cmd.input.button.pointer.idx = name[16] - '1';
 		s = name + 17;
 		i = 0;
 
-		if ((cmd.button.pointer.UD = (*s == 'u' ? -1 : (*s == 'd' ? 1 : 0))))	s += i = 1;
-		if ((cmd.button.pointer.LR = (*s == 'l' ? -1 : (*s == 'r' ? 1 : 0))))	s += i = 1;
+		if ((cmd.input.button.pointer.UD = (*s == 'u' ? -1 : (*s == 'd' ? 1 : 0))))	s += i = 1;
+		if ((cmd.input.button.pointer.LR = (*s == 'l' ? -1 : (*s == 'r' ? 1 : 0))))	s += i = 1;
 
 		if (i == 0 || *(s++) != ' ')
 			return (cmd);
@@ -1435,7 +1437,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		if (i > 3)
 			return (cmd);
 
-		cmd.button.pointer.speed_type = i;
+		cmd.input.button.pointer.speed_type = i;
 
 		cmd.type = S9xButtonPseudopointer;
 	}
@@ -1445,15 +1447,15 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		if (name[14] < '1' || name[14] > '8')
 			return (cmd);
 
-		cmd.axis.pointer.idx = name[14] - '1';
+		cmd.input.axis.pointer.idx = name[14] - '1';
 		s= name + 15;
 		i = 0;
 
 		if (*s == 'h')
-			cmd.axis.pointer.HV = 0;
+			cmd.input.axis.pointer.HV = 0;
 		else
 		if (*s == 'v')
-			cmd.axis.pointer.HV = 1;
+			cmd.input.axis.pointer.HV = 1;
 		else
 			return (cmd);
 
@@ -1461,7 +1463,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			return (cmd);
 
 		s += 2;
-		if ((cmd.axis.pointer.invert = *s == '-'))
+		if ((cmd.input.axis.pointer.invert = *s == '-'))
 			s++;
 
 		for (i = 0; i < 4; i++)
@@ -1470,7 +1472,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		if (i > 3)
 			return (cmd);
 
-		cmd.axis.pointer.speed_type = i;
+		cmd.input.axis.pointer.speed_type = i;
 
 		cmd.type = S9xAxisPseudopointer;
 	}
@@ -1484,7 +1486,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			if (s[1] != '/')
 				return (cmd);
 
-			cmd.axis.button.negbutton = 0;
+			cmd.input.axis.button.negbutton = 0;
 			s += 2;
 		}
 		else
@@ -1501,7 +1503,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			}
 			while (*++s != '/');
 
-			cmd.axis.button.negbutton = i;
+			cmd.input.axis.button.negbutton = i;
 			s++;
 		}
 
@@ -1510,7 +1512,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			if (s[1] != ' ')
 				return (cmd);
 
-			cmd.axis.button.posbutton = 0;
+			cmd.input.axis.button.posbutton = 0;
 			s += 2;
 		}
 		else
@@ -1527,14 +1529,14 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			}
 			while (*++s != ' ');
 
-			cmd.axis.button.posbutton = i;
+			cmd.input.axis.button.posbutton = i;
 			s++;
 		}
 
 		i = get_threshold(&s);
 		if (i < 0)
 			return (cmd);
-		cmd.axis.button.threshold = (i - 1) * 256 / 1000;
+		cmd.input.axis.button.threshold = (i - 1) * 256 / 1000;
 
 		cmd.type = S9xAxisPseudobuttons;
 	}
@@ -1547,7 +1549,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 		if (i >= (int) multis.size())
 			return (cmd);
 
-		cmd.button.multi_idx = i;
+		cmd.input.button.multi_idx = i;
 		cmd.type = S9xButtonMulti;
 	}
 	else
@@ -1652,7 +1654,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 
 		multis.push_back(c);
 
-		cmd.button.multi_idx = multis.size() - 1;
+		cmd.input.button.multi_idx = multis.size() - 1;
 		cmd.type = S9xButtonMulti;
 	}
 	else
@@ -1662,7 +1664,7 @@ s9xcommand_t S9xGetCommandT (const char *name)
 			return (cmd);
 
 		cmd.type = S9xButtonCommand;
-		cmd.button.command = i;
+		cmd.input.button.command = i;
 	}
 
 	return (cmd);
@@ -1757,11 +1759,11 @@ bool S9xMapButton (uint32 id, s9xcommand_t mapping, bool poll)
 			switch (mapping.type)
 			{
 				case S9xButtonJoypad:
-					t = JOYPAD0 + mapping.button.joypad.idx;
+					t = JOYPAD0 + mapping.input.button.joypad.idx;
 					break;
 
 				case S9xButtonMouse:
-					t = MOUSE0 + mapping.button.mouse.idx;
+					t = MOUSE0 + mapping.input.button.mouse.idx;
 					break;
 
 				case S9xButtonSuperscope:
@@ -1769,7 +1771,7 @@ bool S9xMapButton (uint32 id, s9xcommand_t mapping, bool poll)
 					break;
 
 				case S9xButtonJustifier:
-					t = ONE_JUSTIFIER + mapping.button.justifier.idx;
+					t = ONE_JUSTIFIER + mapping.input.button.justifier.idx;
 					break;
 
 				case S9xButtonCommand:
@@ -1849,31 +1851,31 @@ bool S9xMapPointer (uint32 id, s9xcommand_t mapping, bool poll)
 
 	if (mapping.type == S9xPointer)
 	{
-		if (mapping.pointer.aim_mouse0 && mouse[0].ID != InvalidControlID && mouse[0].ID != id)
+		if (mapping.input.pointer.aim_mouse0 && mouse[0].ID != InvalidControlID && mouse[0].ID != id)
 		{
 			fprintf(stderr, "ERROR: Rejecting attempt to control Mouse1 with two pointers\n");
 			return (false);
 		}
 
-		if (mapping.pointer.aim_mouse1 && mouse[1].ID != InvalidControlID && mouse[1].ID != id)
+		if (mapping.input.pointer.aim_mouse1 && mouse[1].ID != InvalidControlID && mouse[1].ID != id)
 		{
 			fprintf(stderr, "ERROR: Rejecting attempt to control Mouse2 with two pointers\n");
 			return (false);
 		}
 
-		if (mapping.pointer.aim_scope && superscope.ID != InvalidControlID && superscope.ID != id)
+		if (mapping.input.pointer.aim_scope && superscope.ID != InvalidControlID && superscope.ID != id)
 		{
 			fprintf(stderr, "ERROR: Rejecting attempt to control SuperScope with two pointers\n");
 			return (false);
 		}
 
-		if (mapping.pointer.aim_justifier0 && justifier.ID[0] != InvalidControlID && justifier.ID[0] != id)
+		if (mapping.input.pointer.aim_justifier0 && justifier.ID[0] != InvalidControlID && justifier.ID[0] != id)
 		{
 			fprintf(stderr, "ERROR: Rejecting attempt to control Justifier1 with two pointers\n");
 			return (false);
 		}
 
-		if (mapping.pointer.aim_justifier1 && justifier.ID[1] != InvalidControlID && justifier.ID[1] != id)
+		if (mapping.input.pointer.aim_justifier1 && justifier.ID[1] != InvalidControlID && justifier.ID[1] != id)
 		{
 			fprintf(stderr, "ERROR: Rejecting attempt to control Justifier2 with two pointers\n");
 			return (false);
@@ -1891,11 +1893,11 @@ bool S9xMapPointer (uint32 id, s9xcommand_t mapping, bool poll)
 			switch (mapping.type)
 			{
 				case S9xPointer:
-					if (mapping.pointer.aim_mouse0    )	pollmap[MOUSE0        ].insert(id);
-					if (mapping.pointer.aim_mouse1    )	pollmap[MOUSE1        ].insert(id);
-					if (mapping.pointer.aim_scope     )	pollmap[SUPERSCOPE    ].insert(id);
-					if (mapping.pointer.aim_justifier0)	pollmap[ONE_JUSTIFIER ].insert(id);
-					if (mapping.pointer.aim_justifier1)	pollmap[TWO_JUSTIFIERS].insert(id);
+					if (mapping.input.pointer.aim_mouse0    )	pollmap[MOUSE0        ].insert(id);
+					if (mapping.input.pointer.aim_mouse1    )	pollmap[MOUSE1        ].insert(id);
+					if (mapping.input.pointer.aim_scope     )	pollmap[SUPERSCOPE    ].insert(id);
+					if (mapping.input.pointer.aim_justifier0)	pollmap[ONE_JUSTIFIER ].insert(id);
+					if (mapping.input.pointer.aim_justifier1)	pollmap[TWO_JUSTIFIERS].insert(id);
 					break;
 
 				case S9xPointerPort:
@@ -1910,11 +1912,11 @@ bool S9xMapPointer (uint32 id, s9xcommand_t mapping, bool poll)
 
 	keymap[id] = mapping;
 
-	if (mapping.pointer.aim_mouse0    )	mouse[0].ID     = id;
-	if (mapping.pointer.aim_mouse1    )	mouse[1].ID     = id;
-	if (mapping.pointer.aim_scope     )	superscope.ID   = id;
-	if (mapping.pointer.aim_justifier0)	justifier.ID[0] = id;
-	if (mapping.pointer.aim_justifier1)	justifier.ID[1] = id;
+	if (mapping.input.pointer.aim_mouse0    )	mouse[0].ID     = id;
+	if (mapping.input.pointer.aim_mouse1    )	mouse[1].ID     = id;
+	if (mapping.input.pointer.aim_scope     )	superscope.ID   = id;
+	if (mapping.input.pointer.aim_justifier0)	justifier.ID[0] = id;
+	if (mapping.input.pointer.aim_justifier1)	justifier.ID[1] = id;
 
 	return (true);
 }
@@ -1975,7 +1977,7 @@ bool S9xMapAxis (uint32 id, s9xcommand_t mapping, bool poll)
 		switch (mapping.type)
 		{
 			case S9xAxisJoypad:
-				t = JOYPAD0 + mapping.axis.joypad.idx;
+				t = JOYPAD0 + mapping.input.axis.joypad.idx;
 				break;
 
 			case S9xAxisPseudopointer:
@@ -2044,42 +2046,42 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 			return;
 
 		case S9xButtonJoypad:
-			if (cmd.button.joypad.toggle)
+			if (cmd.input.button.joypad.toggle)
 			{
 				if (!data1)
 					return;
 
-				uint16	r = cmd.button.joypad.buttons;
+				uint16	r = cmd.input.button.joypad.buttons;
 
-				if (cmd.button.joypad.turbo)	joypad[cmd.button.joypad.idx].toggleturbo ^= r;
-				if (cmd.button.joypad.sticky)	joypad[cmd.button.joypad.idx].togglestick ^= r;
+				if (cmd.input.button.joypad.turbo)	joypad[cmd.input.button.joypad.idx].toggleturbo ^= r;
+				if (cmd.input.button.joypad.sticky)	joypad[cmd.input.button.joypad.idx].togglestick ^= r;
 			}
 			else
 			{
 				uint16	r, s, t, st;
 
 				s = t = st = 0;
-				r = cmd.button.joypad.buttons;
-				st = r & joypad[cmd.button.joypad.idx].togglestick & joypad[cmd.button.joypad.idx].toggleturbo;
+				r = cmd.input.button.joypad.buttons;
+				st = r & joypad[cmd.input.button.joypad.idx].togglestick & joypad[cmd.input.button.joypad.idx].toggleturbo;
 				r ^= st;
-				t  = r & joypad[cmd.button.joypad.idx].toggleturbo;
+				t  = r & joypad[cmd.input.button.joypad.idx].toggleturbo;
 				r ^= t;
-				s  = r & joypad[cmd.button.joypad.idx].togglestick;
+				s  = r & joypad[cmd.input.button.joypad.idx].togglestick;
 				r ^= s;
 
-				if (cmd.button.joypad.turbo && cmd.button.joypad.sticky)
+				if (cmd.input.button.joypad.turbo && cmd.input.button.joypad.sticky)
 				{
 					uint16	x = r; r = st; st = x;
 					x = s; s = t; t = x;
 				}
 				else
-				if (cmd.button.joypad.turbo)
+				if (cmd.input.button.joypad.turbo)
 				{
 					uint16	x = r; r = t; t = x;
 					x = s; s = st; st = x;
 				}
 				else
-				if (cmd.button.joypad.sticky)
+				if (cmd.input.button.joypad.sticky)
 				{
 					uint16	x = r; r = s; s = x;
 					x = t; t = st; st = x;
@@ -2089,35 +2091,35 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 				{
 					if (!Settings.UpAndDown && !S9xMoviePlaying()) // if up+down isn't allowed AND we are NOT playing a movie,
 					{
-						if (cmd.button.joypad.buttons & (SNES_LEFT_MASK | SNES_RIGHT_MASK))
+						if (cmd.input.button.joypad.buttons & (SNES_LEFT_MASK | SNES_RIGHT_MASK))
 						{
 							// if we're pressing left or right, then unpress and unturbo them both first
 							// so we don't end up hittnig left AND right accidentally.
 							// Note though that the user can still do it on purpose, if Settings.UpAndDown = true.
 							// This is a feature, look up glitches in tLoZ:aLttP to find out why.
-							joypad[cmd.button.joypad.idx].buttons &= ~(SNES_LEFT_MASK | SNES_RIGHT_MASK);
-							joypad[cmd.button.joypad.idx].turbos  &= ~(SNES_LEFT_MASK | SNES_RIGHT_MASK);
+							joypad[cmd.input.button.joypad.idx].buttons &= ~(SNES_LEFT_MASK | SNES_RIGHT_MASK);
+							joypad[cmd.input.button.joypad.idx].turbos  &= ~(SNES_LEFT_MASK | SNES_RIGHT_MASK);
 						}
 
-						if (cmd.button.joypad.buttons & (SNES_UP_MASK | SNES_DOWN_MASK))
+						if (cmd.input.button.joypad.buttons & (SNES_UP_MASK | SNES_DOWN_MASK))
 						{
 							// and ditto for up/down
-							joypad[cmd.button.joypad.idx].buttons &= ~(SNES_UP_MASK | SNES_DOWN_MASK);
-							joypad[cmd.button.joypad.idx].turbos  &= ~(SNES_UP_MASK | SNES_DOWN_MASK);
+							joypad[cmd.input.button.joypad.idx].buttons &= ~(SNES_UP_MASK | SNES_DOWN_MASK);
+							joypad[cmd.input.button.joypad.idx].turbos  &= ~(SNES_UP_MASK | SNES_DOWN_MASK);
 						}
 					}
 
-					joypad[cmd.button.joypad.idx].buttons |= r;
-					joypad[cmd.button.joypad.idx].turbos  |= t;
-					joypad[cmd.button.joypad.idx].buttons ^= s;
-					joypad[cmd.button.joypad.idx].buttons &= ~(joypad[cmd.button.joypad.idx].turbos & st);
-					joypad[cmd.button.joypad.idx].turbos  ^= st;
+					joypad[cmd.input.button.joypad.idx].buttons |= r;
+					joypad[cmd.input.button.joypad.idx].turbos  |= t;
+					joypad[cmd.input.button.joypad.idx].buttons ^= s;
+					joypad[cmd.input.button.joypad.idx].buttons &= ~(joypad[cmd.input.button.joypad.idx].turbos & st);
+					joypad[cmd.input.button.joypad.idx].turbos  ^= st;
 				}
 				else
 				{
-					joypad[cmd.button.joypad.idx].buttons &= ~r;
-					joypad[cmd.button.joypad.idx].buttons &= ~(joypad[cmd.button.joypad.idx].turbos & t);
-					joypad[cmd.button.joypad.idx].turbos  &= ~t;
+					joypad[cmd.input.button.joypad.idx].buttons &= ~r;
+					joypad[cmd.input.button.joypad.idx].buttons &= ~(joypad[cmd.input.button.joypad.idx].turbos & t);
+					joypad[cmd.input.button.joypad.idx].turbos  &= ~t;
 				}
 			}
 
@@ -2125,28 +2127,28 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 
 		case S9xButtonMouse:
 			i = 0;
-			if (cmd.button.mouse.left )	i |= 0x40;
-			if (cmd.button.mouse.right)	i |= 0x80;
+			if (cmd.input.button.mouse.left )	i |= 0x40;
+			if (cmd.input.button.mouse.right)	i |= 0x80;
 
 			if (data1)
-				mouse[cmd.button.mouse.idx].buttons |=  i;
-			else 
-				mouse[cmd.button.mouse.idx].buttons &= ~i;
+				mouse[cmd.input.button.mouse.idx].buttons |=  i;
+			else
+				mouse[cmd.input.button.mouse.idx].buttons &= ~i;
 
 			return;
 
 		case S9xButtonSuperscope:
 			i = 0;
-			if (cmd.button.scope.fire         )	i |= SUPERSCOPE_FIRE;
-			if (cmd.button.scope.cursor       )	i |= SUPERSCOPE_CURSOR;
-			if (cmd.button.scope.pause        )	i |= SUPERSCOPE_PAUSE;
-			if (cmd.button.scope.aim_offscreen)	i |= SUPERSCOPE_OFFSCREEN;
+			if (cmd.input.button.scope.fire         )	i |= SUPERSCOPE_FIRE;
+			if (cmd.input.button.scope.cursor       )	i |= SUPERSCOPE_CURSOR;
+			if (cmd.input.button.scope.pause        )	i |= SUPERSCOPE_PAUSE;
+			if (cmd.input.button.scope.aim_offscreen)	i |= SUPERSCOPE_OFFSCREEN;
 
 			if (data1)
 			{
 				superscope.phys_buttons |= i;
 
-				if (cmd.button.scope.turbo)
+				if (cmd.input.button.scope.turbo)
 				{
 					superscope.phys_buttons ^= SUPERSCOPE_TURBO;
 
@@ -2172,10 +2174,10 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 
 		case S9xButtonJustifier:
 			i = 0;
-			if (cmd.button.justifier.trigger)	i |= JUSTIFIER_TRIGGER;
-			if (cmd.button.justifier.start  )	i |= JUSTIFIER_START;
-			if (cmd.button.justifier.aim_offscreen)	justifier.offscreen[cmd.button.justifier.idx] = data1 ? 1 : 0;
-			i >>= cmd.button.justifier.idx;
+			if (cmd.input.button.justifier.trigger)	i |= JUSTIFIER_TRIGGER;
+			if (cmd.input.button.justifier.start  )	i |= JUSTIFIER_START;
+			if (cmd.input.button.justifier.aim_offscreen)	justifier.offscreen[cmd.input.button.justifier.idx] = data1 ? 1 : 0;
+			i >>= cmd.input.button.justifier.idx;
 
 			if (data1)
 				justifier.buttons |=  i;
@@ -2185,15 +2187,15 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 			return;
 
 		case S9xButtonCommand:
-			if (((enum command_numbers) cmd.button.command) >= LAST_COMMAND)
+			if (((enum command_numbers) cmd.input.button.command) >= LAST_COMMAND)
 			{
-				fprintf(stderr, "Unknown command %04x\n", cmd.button.command);
+				fprintf(stderr, "Unknown command %04x\n", cmd.input.button.command);
 				return;
 			}
 
 			if (!data1)
 			{
-				switch (i = cmd.button.command)
+				switch (i = cmd.input.button.command)
 				{
 					case EmuTurbo:
 						Settings.TurboMode = FALSE;
@@ -2202,7 +2204,7 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 			}
 			else
 			{
-				switch ((enum command_numbers) (i = cmd.button.command))
+				switch ((enum command_numbers) (i = cmd.input.button.command))
 				{
 					case ExitEmu:
 						S9xExit();
@@ -2213,11 +2215,11 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 						break;
 
 					case SoftReset:
-#ifdef FANCY                    
+#ifdef FANCY
 						S9xMovieUpdateOnReset();
 						if (S9xMoviePlaying())
 							S9xMovieStop(TRUE);
-#endif                            
+#endif
 						S9xSoftReset();
 						break;
 
@@ -2486,15 +2488,15 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 						break;
 
 					case BeginRecordingMovie:
-#ifdef FANCY                    
+#ifdef FANCY
 						if (S9xMovieActive())
 							S9xMovieStop(FALSE);
 						S9xMovieCreate(S9xChooseMovieFilename(FALSE), 0xFF, MOVIE_OPT_FROM_RESET, NULL, 0);
-#endif                        
+#endif
 						break;
 
 					case LoadMovie:
-#ifdef FANCY                    
+#ifdef FANCY
 						if (S9xMovieActive())
 							S9xMovieStop(FALSE);
 						S9xMovieOpen(S9xChooseMovieFilename(TRUE), FALSE);
@@ -2573,31 +2575,31 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 			return;
 
 		case S9xPointer:
-			if (cmd.pointer.aim_mouse0)
+			if (cmd.input.pointer.aim_mouse0)
 			{
 				mouse[0].cur_x = data1;
 				mouse[0].cur_y = data2;
 			}
 
-			if (cmd.pointer.aim_mouse1)
+			if (cmd.input.pointer.aim_mouse1)
 			{
 				mouse[1].cur_x = data1;
 				mouse[1].cur_y = data2;
 			}
 
-			if (cmd.pointer.aim_scope)
+			if (cmd.input.pointer.aim_scope)
 			{
 				superscope.x   = data1;
 				superscope.y   = data2;
 			}
 
-			if (cmd.pointer.aim_justifier0)
+			if (cmd.input.pointer.aim_justifier0)
 			{
 				justifier.x[0] = data1;
 				justifier.y[0] = data2;
 			}
 
-			if (cmd.pointer.aim_justifier1)
+			if (cmd.input.pointer.aim_justifier1)
 			{
 				justifier.x[1] = data1;
 				justifier.y[1] = data2;
@@ -2608,32 +2610,32 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 		case S9xButtonPseudopointer:
 			if (data1)
 			{
-				if (cmd.button.pointer.UD)
+				if (cmd.input.button.pointer.UD)
 				{
-					if (!pseudopointer[cmd.button.pointer.idx].V_adj)
-						pseudopointer[cmd.button.pointer.idx].V_adj = cmd.button.pointer.UD * ptrspeeds[cmd.button.pointer.speed_type];
-					pseudopointer[cmd.button.pointer.idx].V_var = (cmd.button.pointer.speed_type == 0);
+					if (!pseudopointer[cmd.input.button.pointer.idx].V_adj)
+						pseudopointer[cmd.input.button.pointer.idx].V_adj = cmd.input.button.pointer.UD * ptrspeeds[cmd.input.button.pointer.speed_type];
+					pseudopointer[cmd.input.button.pointer.idx].V_var = (cmd.input.button.pointer.speed_type == 0);
 				}
 
-				if (cmd.button.pointer.LR)
+				if (cmd.input.button.pointer.LR)
 				{
-					if (!pseudopointer[cmd.button.pointer.idx].H_adj)
-						pseudopointer[cmd.button.pointer.idx].H_adj = cmd.button.pointer.LR * ptrspeeds[cmd.button.pointer.speed_type];
-					pseudopointer[cmd.button.pointer.idx].H_var = (cmd.button.pointer.speed_type == 0);
+					if (!pseudopointer[cmd.input.button.pointer.idx].H_adj)
+						pseudopointer[cmd.input.button.pointer.idx].H_adj = cmd.input.button.pointer.LR * ptrspeeds[cmd.input.button.pointer.speed_type];
+					pseudopointer[cmd.input.button.pointer.idx].H_var = (cmd.input.button.pointer.speed_type == 0);
 				}
 			}
 			else
 			{
-				if (cmd.button.pointer.UD)
+				if (cmd.input.button.pointer.UD)
 				{
-					pseudopointer[cmd.button.pointer.idx].V_adj = 0;
-					pseudopointer[cmd.button.pointer.idx].V_var = false;
+					pseudopointer[cmd.input.button.pointer.idx].V_adj = 0;
+					pseudopointer[cmd.input.button.pointer.idx].V_var = false;
 				}
 
-				if (cmd.button.pointer.LR)
+				if (cmd.input.button.pointer.LR)
 				{
-					pseudopointer[cmd.button.pointer.idx].H_adj = 0;
-					pseudopointer[cmd.button.pointer.idx].H_var = false;
+					pseudopointer[cmd.input.button.pointer.idx].H_adj = 0;
+					pseudopointer[cmd.input.button.pointer.idx].H_var = false;
 				}
 			}
 
@@ -2643,7 +2645,7 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 		{
 			uint16	pos, neg;
 
-			switch (cmd.axis.joypad.axis)
+			switch (cmd.input.axis.joypad.axis)
 			{
 				case 0: neg = SNES_LEFT_MASK;	pos = SNES_RIGHT_MASK;	break;
 				case 1: neg = SNES_UP_MASK;		pos = SNES_DOWN_MASK;	break;
@@ -2653,25 +2655,25 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 				default: return;
 			}
 
-			if (cmd.axis.joypad.invert)
+			if (cmd.input.axis.joypad.invert)
 				data1 = -data1;
 
 			uint16	p, r;
 
 			p = r = 0;
-			if (data1 >  ((cmd.axis.joypad.threshold + 1) *  127))
+			if (data1 >  ((cmd.input.axis.joypad.threshold + 1) *  127))
 				p |= pos;
 			else
 				r |= pos;
 
-			if (data1 <= ((cmd.axis.joypad.threshold + 1) * -127))
+			if (data1 <= ((cmd.input.axis.joypad.threshold + 1) * -127))
 				p |= neg;
 			else
 				r |= neg;
 
-			joypad[cmd.axis.joypad.idx].buttons |= p;
-			joypad[cmd.axis.joypad.idx].buttons &= ~r;
-			joypad[cmd.axis.joypad.idx].turbos  &= ~(p | r);
+			joypad[cmd.input.axis.joypad.idx].buttons |= p;
+			joypad[cmd.input.axis.joypad.idx].buttons &= ~r;
+			joypad[cmd.input.axis.joypad.idx].turbos  &= ~(p | r);
 
 			return;
 		}
@@ -2679,70 +2681,70 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 		case S9xAxisPseudopointer:
 			if (data1 == 0)
 			{
-				if (cmd.axis.pointer.HV)
+				if (cmd.input.axis.pointer.HV)
 				{
-					pseudopointer[cmd.axis.pointer.idx].V_adj = 0;
-					pseudopointer[cmd.axis.pointer.idx].V_var = false;
+					pseudopointer[cmd.input.axis.pointer.idx].V_adj = 0;
+					pseudopointer[cmd.input.axis.pointer.idx].V_var = false;
 				}
 				else
 				{
-					pseudopointer[cmd.axis.pointer.idx].H_adj = 0;
-					pseudopointer[cmd.axis.pointer.idx].H_var = false;
+					pseudopointer[cmd.input.axis.pointer.idx].H_adj = 0;
+					pseudopointer[cmd.input.axis.pointer.idx].H_var = false;
 				}
 			}
 			else
 			{
-				if (cmd.axis.pointer.invert)
+				if (cmd.input.axis.pointer.invert)
 					data1 = -data1;
 
-				if (cmd.axis.pointer.HV)
+				if (cmd.input.axis.pointer.HV)
 				{
-					if (!pseudopointer[cmd.axis.pointer.idx].V_adj)
-						pseudopointer[cmd.axis.pointer.idx].V_adj = (int16) ((int32) data1 * ptrspeeds[cmd.axis.pointer.speed_type] / 32767);
-					pseudopointer[cmd.axis.pointer.idx].V_var = (cmd.axis.pointer.speed_type == 0);
+					if (!pseudopointer[cmd.input.axis.pointer.idx].V_adj)
+						pseudopointer[cmd.input.axis.pointer.idx].V_adj = (int16) ((int32) data1 * ptrspeeds[cmd.input.axis.pointer.speed_type] / 32767);
+					pseudopointer[cmd.input.axis.pointer.idx].V_var = (cmd.input.axis.pointer.speed_type == 0);
 				}
 				else
 				{
-					if (!pseudopointer[cmd.axis.pointer.idx].H_adj)
-						pseudopointer[cmd.axis.pointer.idx].H_adj = (int16) ((int32) data1 * ptrspeeds[cmd.axis.pointer.speed_type] / 32767);
-					pseudopointer[cmd.axis.pointer.idx].H_var = (cmd.axis.pointer.speed_type == 0);
+					if (!pseudopointer[cmd.input.axis.pointer.idx].H_adj)
+						pseudopointer[cmd.input.axis.pointer.idx].H_adj = (int16) ((int32) data1 * ptrspeeds[cmd.input.axis.pointer.speed_type] / 32767);
+					pseudopointer[cmd.input.axis.pointer.idx].H_var = (cmd.input.axis.pointer.speed_type == 0);
 				}
 			}
 
 			return;
 
 		case S9xAxisPseudobuttons:
-			if (data1 >  ((cmd.axis.button.threshold + 1) *  127))
+			if (data1 >  ((cmd.input.axis.button.threshold + 1) *  127))
 			{
-				if (!pseudobuttons[cmd.axis.button.posbutton])
+				if (!pseudobuttons[cmd.input.axis.button.posbutton])
 				{
-					pseudobuttons[cmd.axis.button.posbutton] = 1;
-					S9xReportButton(PseudoButtonBase + cmd.axis.button.posbutton, true);
+					pseudobuttons[cmd.input.axis.button.posbutton] = 1;
+					S9xReportButton(PseudoButtonBase + cmd.input.axis.button.posbutton, true);
 				}
 			}
 			else
 			{
-				if (pseudobuttons[cmd.axis.button.posbutton])
+				if (pseudobuttons[cmd.input.axis.button.posbutton])
 				{
-					pseudobuttons[cmd.axis.button.posbutton] = 0;
-					S9xReportButton(PseudoButtonBase + cmd.axis.button.posbutton, false);
+					pseudobuttons[cmd.input.axis.button.posbutton] = 0;
+					S9xReportButton(PseudoButtonBase + cmd.input.axis.button.posbutton, false);
 				}
 			}
 
-			if (data1 <= ((cmd.axis.button.threshold + 1) * -127))
+			if (data1 <= ((cmd.input.axis.button.threshold + 1) * -127))
 			{
-				if (!pseudobuttons[cmd.axis.button.negbutton])
+				if (!pseudobuttons[cmd.input.axis.button.negbutton])
 				{
-					pseudobuttons[cmd.axis.button.negbutton] = 1;
-					S9xReportButton(PseudoButtonBase + cmd.axis.button.negbutton, true);
+					pseudobuttons[cmd.input.axis.button.negbutton] = 1;
+					S9xReportButton(PseudoButtonBase + cmd.input.axis.button.negbutton, true);
 				}
 			}
 			else
 			{
-				if (pseudobuttons[cmd.axis.button.negbutton])
+				if (pseudobuttons[cmd.input.axis.button.negbutton])
 				{
-					pseudobuttons[cmd.axis.button.negbutton] = 0;
-					S9xReportButton(PseudoButtonBase + cmd.axis.button.negbutton, false);
+					pseudobuttons[cmd.input.axis.button.negbutton] = 0;
+					S9xReportButton(PseudoButtonBase + cmd.input.axis.button.negbutton, false);
 				}
 			}
 
@@ -2755,19 +2757,19 @@ void S9xApplyCommand (s9xcommand_t cmd, int16 data1, int16 data2)
 			return;
 
 		case S9xButtonMulti:
-			if (cmd.button.multi_idx >= (int) multis.size())
+			if (cmd.input.button.multi_idx >= (int) multis.size())
 				return;
 
-			if (multis[cmd.button.multi_idx]->multi_press && !data1)
+			if (multis[cmd.input.button.multi_idx]->multi_press && !data1)
 				return;
 
-			i = ApplyMulti(multis[cmd.button.multi_idx], 0, data1);
+			i = ApplyMulti(multis[cmd.input.button.multi_idx], 0, data1);
 			if (i >= 0)
 			{
 				struct exemulti	*e = new struct exemulti;
 				e->pos    = i;
 				e->data1  = data1 != 0;
-				e->script = multis[cmd.button.multi_idx];
+				e->script = multis[cmd.input.button.multi_idx];
 				exemultis.insert(e);
 			}
 
@@ -3179,7 +3181,9 @@ void S9xDoAutoJoypad (void)
 
 void S9xControlEOF (void)
 {
-	struct crosshair	*c;
+	#ifdef FANCY
+	  struct crosshair	*c;
+	#endif
 	int					i, j;
 
 	PPU.GunVLatch = 1000; // i.e., never latch
