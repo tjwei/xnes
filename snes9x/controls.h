@@ -300,7 +300,7 @@ typedef struct
 		}	pointer;
 
 		uint8	port[4];
-	};
+	} input;
 }	s9xcommand_t;
 
 // Starting out...
@@ -323,7 +323,7 @@ void S9xSetController (int port, enum controllers controller, int8 id1, int8 id2
 void S9xGetController (int port, enum controllers *controller, int8 *id1, int8 *id2, int8 *id3, int8 *id4);
 void S9xReportControllers (void);
 
-// Call this when you're done with S9xSetController, or if you change any of the controller Settings.*Master flags. 
+// Call this when you're done with S9xSetController, or if you change any of the controller Settings.*Master flags.
 // Returns true if something was disabled.
 
 bool S9xVerifyControllers (void);
