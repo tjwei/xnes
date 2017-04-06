@@ -216,7 +216,7 @@
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
-static bool8	stopMovie = TRUE;
+// static bool8	stopMovie = TRUE;
 static char		LastRomFilename[PATH_MAX + 1] = "";
 
 // from NSRT
@@ -2157,11 +2157,11 @@ bool8 CMemory::SaveSRAM (const char *filename)
 		if (file)
 		{
 			size_t	ignore;
-			printf("Writing file %s.\n", file);
+			printf("Writing file %s.\n", sramName);
 			ignore = fwrite((char *) SRAM, 1, size, file);
 			fclose(file);
 		#ifdef __linux
-		  printf("Changing permissions for file %s.\n", file);
+		  printf("Changing permissions for file %s.\n", sramName);
 			ignore = chown(sramName, getuid(), getgid());
 		#endif
 
@@ -3917,7 +3917,7 @@ static bool8 ReadBPSPatch (Reader *r, long, int32 &rom_size)
 	if(patch_crc32 != pp_crc32) { delete[] data; return false; }  //patch is corrupted
 	if(rom_crc32 != source_crc32) { delete[] data; return false; }  //patch is for a different ROM
 
-	uint32 source_size = XPSdecode(data, addr, size);
+	// uint32 source_size = XPSdecode(data, addr, size);
 	uint32 target_size = XPSdecode(data, addr, size);
 	uint32 metadata_size = XPSdecode(data, addr, size);
 	addr += metadata_size;

@@ -66,8 +66,7 @@
 #endif
 
 
-static const char	*s9x_base_dir        = NULL,
-					*rom_filename        = "_.smc";
+static const char	*s9x_base_dir        = NULL;
 
 extern uint32           sound_buffer_size; // used in sdlaudio
 
@@ -642,7 +641,6 @@ void run(char *filename){
 
 int main (int argc, char **argv)
 {
-    int iters;
 	printf("\n\nSnes9x " VERSION " for unix/SDL\n");
 
 	snprintf(default_dir, PATH_MAX + 1, "%s%s%s", getenv("HOME"), SLASH_STR, ".snes9x");
@@ -766,6 +764,7 @@ int main (int argc, char **argv)
 #endif
     printf("before start\n");
     printf("registers.pcw=%x\n", Registers.PCw);
+	int iters;
 	for(iters=0;iters<5000;iters++)
 	{
 
